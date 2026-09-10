@@ -22,7 +22,7 @@ jobs:
     name: 型検査・テスト・ビルド
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: bun のセットアップ
         uses: oven-sh/setup-bun@v2
@@ -54,7 +54,7 @@ jobs:
       # 宣言漏れの依存 (phantom dependency) を検出できない。
       # 利用側を模した非巻き上げレイアウトでビルドし直して確認する。
       - name: Node のセットアップ (配布検証の npm pack / npm install 用)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: "22"
 
@@ -73,7 +73,7 @@ jobs:
       # </important>
       - name: Storybook の静的成果物をアップロード（main のみ）
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: storybook-static
           path: storybook-static
