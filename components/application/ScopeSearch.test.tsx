@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import type * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ScopeSearch, type ScopeSearchItem } from "./ScopeSearch";
@@ -46,6 +46,62 @@ function open(props: Partial<React.ComponentProps<typeof ScopeSearch>> = {}) {
 function type(input: HTMLElement, value: string) {
   fireEvent.change(input, { target: { value } });
 }
+
+/* パネルは呼び出し側の overflow: hidden で切れないよう portal で DOM の外へ出している。
+ * DOM 上の親子関係に頼っていた「内側か」の判定と Tab の順路が壊れやすいので固定する。 */
+describe("ScopeSearch（パネルの描画先）", () => {
+  it("パネルは入力欄の DOM の外（document.body）へ描く", () => {
+    const { container } = open();
+    const listbox = screen.getByRole("listbox");
+    expect(container.contains(listbox)).toBe(false);
+    expect(document.body.contains(listbox)).toBe(true);
+  });
+
+  it("portalContainer を渡すとそこへ描く", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const { unmount } = open({ portalContainer: host });
+    expect(host.contains(screen.getByRole("listbox"))).toBe(true);
+    unmount();
+    host.remove();
+  });
+
+  it("パネル内の mousedown では閉じない", () => {
+    open({ recentValues: ["s1"] });
+    fireEvent.mouseDown(screen.getByRole("listbox"));
+    expect(screen.getByRole("listbox")).toBeTruthy();
+  });
+
+  it("Tab で種別チップへ入り、Shift+Tab で入力欄へ戻る（パネルは閉じない）", () => {
+    const { input } = open();
+    act(() => input.focus());
+
+    fireEvent.keyDown(input, { key: "Tab" });
+    expect(document.activeElement?.textContent).toBe("すべて");
+    expect(screen.getByRole("listbox")).toBeTruthy();
+
+    fireEvent.keyDown(document.activeElement as HTMLElement, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(input);
+    expect(screen.getByRole("listbox")).toBeTruthy();
+  });
+
+  it("パネルの最後から Tab で、ページ上の次の要素へ進んで閉じる", () => {
+    render(
+      <>
+        <ScopeSearch items={ITEMS} placeholder="検索" />
+        <button type="button">次の要素</button>
+      </>,
+    );
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+    act(() => input.focus());
+
+    fireEvent.keyDown(input, { key: "Tab" });
+    fireEvent.keyDown(document.activeElement as HTMLElement, { key: "Tab" });
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "次の要素" }));
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+});
 
 describe("ScopeSearch", () => {
   it("フォーカスするまでパネルを開かない", () => {

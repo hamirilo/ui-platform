@@ -18,6 +18,7 @@
  */
 
 import * as React from "react";
+import { createPortal } from "react-dom";
 import { cn } from "../../lib/utils";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "../ui/empty";
 import { Spinner } from "../ui/spinner";
@@ -169,6 +170,18 @@ export interface ScopeSearchProps {
   className?: string;
 
   /**
+   * 候補パネルの描画先。省略時（`null` を含む）は `document.body`。
+   *
+   * <important>
+   * パネルは呼び出し側の `overflow: hidden` で切れないよう、入力欄の DOM の外へ
+   * portal で出す。Dialog の中で使うときは Dialog のポップアップ要素を渡すこと。
+   * body へ出すと、パネル内の操作が「Dialog の外側」として扱われ、
+   * モーダルのフォーカス管理や外側クリックの判定とぶつかる。
+   * </important>
+   */
+  portalContainer?: HTMLElement | null;
+
+  /**
    * 入力欄のラベル。
    *
    * <important>
@@ -216,6 +229,117 @@ function kindsFromItems(items: ScopeSearchItem[]): string[] {
 function matchesQuery(item: ScopeSearchItem, needle: string): boolean {
   const haystack = `${item.label} ${item.description ?? ""} ${item.keywords ?? ""}`;
   return haystack.toLowerCase().includes(needle);
+}
+
+/** 入力欄とパネルの間隔（px） */
+const PANEL_GAP = 4;
+
+/** パネルを画面の上下端から離す量（px） */
+const VIEWPORT_MARGIN = 8;
+
+/**
+ * パネルを入力欄の真下（入りきらず、上のほうが広ければ真上）へ `position: fixed` で置く。
+ *
+ * <important>
+ * パネルは portal で入力欄の DOM の外へ出している。`position: absolute` のままだと
+ * 呼び出し側の `overflow: hidden`（カード・スクロール領域・モーダル）で切れ、
+ * z-index では直らない（クリッピングは重なり順と無関係）。
+ *
+ * 描画先の祖先に transform 等があると fixed の基準がその要素へ移るため、
+ * 置いたあとに実測して、ずれた分を戻す。
+ * </important>
+ */
+function placePanel(anchor: HTMLElement, panel: HTMLElement) {
+  const rect = anchor.getBoundingClientRect();
+  const viewportWidth = document.documentElement.clientWidth;
+
+  // 前回の上限を外してから、中身どおりの高さを測る
+  panel.style.width = `${rect.width}px`;
+  panel.style.maxHeight = "";
+  const naturalHeight = panel.offsetHeight;
+
+  const spaceBelow = window.innerHeight - rect.bottom - PANEL_GAP - VIEWPORT_MARGIN;
+  const spaceAbove = rect.top - PANEL_GAP - VIEWPORT_MARGIN;
+  const side = naturalHeight > spaceBelow && spaceAbove > spaceBelow ? "top" : "bottom";
+  const available = Math.max(side === "top" ? spaceAbove : spaceBelow, 0);
+  const height = Math.min(naturalHeight, available);
+
+  const top = side === "top" ? rect.top - PANEL_GAP - height : rect.bottom + PANEL_GAP;
+  // min-w-64 で入力欄より広くなることがあるため、右端からはみ出す分だけ左へ寄せる
+  const left = Math.max(
+    Math.min(rect.left, viewportWidth - VIEWPORT_MARGIN - panel.offsetWidth),
+    0,
+  );
+
+  panel.style.maxHeight = `${available}px`;
+  panel.style.top = `${top}px`;
+  panel.style.left = `${left}px`;
+  panel.dataset.side = side;
+
+  const placed = panel.getBoundingClientRect();
+  const driftTop = top - placed.top;
+  const driftLeft = left - placed.left;
+  if (Math.abs(driftTop) > 0.5 || Math.abs(driftLeft) > 0.5) {
+    panel.style.top = `${top + driftTop}px`;
+    panel.style.left = `${left + driftLeft}px`;
+  }
+}
+
+/**
+ * 開いているあいだ、パネルを入力欄へ追従させる。
+ *
+ * 位置は state ではなく style へ直接書く。スクロールのたびに再レンダーさせないため。
+ */
+function useAnchoredPanel(open: boolean) {
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+  const panelRef = React.useRef<HTMLDivElement>(null);
+
+  // 候補の件数が変わると高さも変わるので、描画のたびに置き直す
+  React.useLayoutEffect(() => {
+    if (open && anchorRef.current && panelRef.current) {
+      placePanel(anchorRef.current, panelRef.current);
+    }
+  });
+
+  React.useEffect(() => {
+    const anchor = anchorRef.current;
+    const panel = panelRef.current;
+    if (!open || !anchor || !panel) return;
+
+    const update = () => placePanel(anchor, panel);
+    window.addEventListener("resize", update);
+    // capture で拾えば、どの祖先がスクロールしても追従できる
+    document.addEventListener("scroll", update, true);
+    const observer = typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(update);
+    observer?.observe(anchor);
+    observer?.observe(panel);
+
+    return () => {
+      window.removeEventListener("resize", update);
+      document.removeEventListener("scroll", update, true);
+      observer?.disconnect();
+    };
+  }, [open]);
+
+  return { anchorRef, panelRef };
+}
+
+const TABBABLE_SELECTOR = "a[href], button, input, select, textarea, [tabindex]";
+
+/** Tab で止まる要素（文書順） */
+function tabbables(scope: ParentNode): HTMLElement[] {
+  return Array.from(scope.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter(
+    (el) => el.tabIndex >= 0 && !el.matches(":disabled"),
+  );
+}
+
+/** 先頭から順に focus し、実際に移れたら true。非表示の要素は focus できないため飛ばす */
+function focusFirstOf(candidates: HTMLElement[]): boolean {
+  for (const el of candidates) {
+    el.focus();
+    if (document.activeElement === el) return true;
+  }
+  return false;
 }
 
 /**
@@ -273,6 +397,7 @@ export const ScopeSearch = React.forwardRef<HTMLInputElement, ScopeSearchProps>(
       hint = "↑↓ で移動 ・ Enter で決定",
       disabled = false,
       className,
+      portalContainer,
       id,
       "aria-label": ariaLabel,
       "aria-labelledby": ariaLabelledBy,
@@ -285,9 +410,16 @@ export const ScopeSearch = React.forwardRef<HTMLInputElement, ScopeSearchProps>(
     const listId = `${reactId}-list`;
     const optionId = (index: number) => `${reactId}-option-${index}`;
 
-    const rootRef = React.useRef<HTMLDivElement>(null);
-
     const [open, setOpen] = React.useState(false);
+    const panelVisible = open && !disabled;
+    const { anchorRef: rootRef, panelRef } = useAnchoredPanel(panelVisible);
+    const portalTarget =
+      portalContainer ?? (typeof document === "undefined" ? null : document.body);
+
+    // パネルは portal で入力欄の DOM の外にあるため、「内側か」は両方を見て判定する
+    const isInside = (node: Node | null) =>
+      node !== null &&
+      (rootRef.current?.contains(node) === true || panelRef.current?.contains(node) === true);
 
     // カーソルは「どの検索条件のときの位置か」と一緒に持つ。
     // 条件が変わったら 0 に戻したいが、effect で戻すと 1 フレームだけ
@@ -376,11 +508,14 @@ export const ScopeSearch = React.forwardRef<HTMLInputElement, ScopeSearchProps>(
     React.useEffect(() => {
       if (!open) return;
       const onPointerDown = (event: MouseEvent) => {
-        if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+        const target = event.target as Node;
+        if (!rootRef.current?.contains(target) && !panelRef.current?.contains(target)) {
+          setOpen(false);
+        }
       };
       document.addEventListener("mousedown", onPointerDown);
       return () => document.removeEventListener("mousedown", onPointerDown);
-    }, [open]);
+    }, [open, rootRef, panelRef]);
 
     const select = (item: ScopeSearchItem) => {
       setOpen(false);
@@ -407,6 +542,38 @@ export const ScopeSearch = React.forwardRef<HTMLInputElement, ScopeSearchProps>(
           event.preventDefault();
           setOpen(false);
         }
+      } else if (event.key === "Tab" && !event.shiftKey) {
+        // パネルは portal で DOM の末尾にあるため、ブラウザ任せの Tab では
+        // 種別チップへ入れない。入力欄の次はパネル内、という順路をここで作る。
+        const panel = panelRef.current;
+        if (open && panel && focusFirstOf(tabbables(panel))) event.preventDefault();
+      }
+    };
+
+    const onPanelKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key !== "Tab") return;
+      const inPanel = tabbables(event.currentTarget);
+      const target = event.target as HTMLElement;
+
+      if (event.shiftKey && target === inPanel[0]) {
+        // パネルの先頭から戻るときは入力欄へ
+        const input = rootRef.current?.querySelector("input");
+        if (input) {
+          event.preventDefault();
+          input.focus();
+        }
+      } else if (!event.shiftKey && target === inPanel[inPanel.length - 1]) {
+        // パネルを抜けたら、ページ上で ScopeSearch の次にある要素へ進める
+        const root = rootRef.current;
+        const panel = event.currentTarget;
+        if (!root) return;
+        const following = tabbables(document).filter(
+          (el) =>
+            !root.contains(el) &&
+            !panel.contains(el) &&
+            (root.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+        );
+        if (focusFirstOf(following)) event.preventDefault();
       }
     };
 
@@ -418,10 +585,11 @@ export const ScopeSearch = React.forwardRef<HTMLInputElement, ScopeSearchProps>(
     return (
       <div
         ref={rootRef}
-        className={cn("relative w-full", className)}
+        className={cn("w-full", className)}
         onBlur={(event) => {
-          // Tab でパネル外へ出たら閉じる（パネル内の移動では閉じない）
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false);
+          // Tab でパネル外へ出たら閉じる（パネル内の移動では閉じない）。
+          // パネルは DOM 上はここの外にあるが、React のイベントは portal からもここへ届く。
+          if (!isInside(event.relatedTarget as Node | null)) setOpen(false);
         }}
       >
         <SearchInput
@@ -454,142 +622,149 @@ export const ScopeSearch = React.forwardRef<HTMLInputElement, ScopeSearchProps>(
           onKeyDown={onKeyDown}
         />
 
-        {open && !disabled && (
-          <div className="absolute top-[calc(100%+4px)] left-0 z-50 w-full min-w-64 overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg">
-            {scopeKinds.length > 1 && (
-              <div className="overflow-x-auto border-b border-border p-2">
-                <ButtonGroup
-                  size="sm"
-                  variant="primary"
-                  aria-label="種別で絞り込む"
-                  items={[
-                    { value: ALL_SCOPE_ID, label: allLabel },
-                    ...scopeKinds.map((kind, index) => ({
-                      value: kindScopeId(index),
-                      label: kind,
-                    })),
-                  ]}
-                  value={currentScopeId}
-                  onValueChange={(id) => {
-                    const index = scopeKinds.findIndex((_, i) => kindScopeId(i) === id);
-                    updateScope(index >= 0 ? (scopeKinds[index] as string) : null);
-                  }}
-                />
-              </div>
-            )}
-
-            {/* フォーカスは入力欄に留め、位置は aria-activedescendant で伝える
-             * （ARIA 1.2 の combobox パターン）。この一覧と行は Tab の順路に
-             * 入れないため tabIndex は -1 で固定する。 */}
+        {panelVisible &&
+          portalTarget &&
+          createPortal(
             <div
-              id={listId}
-              role="listbox"
-              tabIndex={-1}
-              aria-label={ariaLabel ?? placeholder}
-              className="max-h-80 overflow-y-auto p-1.5"
+              ref={panelRef}
+              onKeyDown={onPanelKeyDown}
+              className="fixed z-50 flex min-w-64 flex-col overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-lg"
             >
-              {groups.map((group, groupIndex) => {
-                const headingId = `${reactId}-group-${groupIndex}`;
-                return (
-                  <div key={group.kind} role="group" aria-labelledby={headingId}>
-                    <div className="flex items-baseline justify-between gap-2 px-2 pt-2 pb-1">
-                      <span
-                        id={headingId}
-                        className="text-[11px] font-semibold tracking-wide text-muted-foreground"
-                      >
-                        {group.label}
-                      </span>
-                      {hasQuery && (
-                        <span className="text-[11px] text-muted-foreground tabular-nums">
-                          {group.items.length} 件
-                        </span>
-                      )}
-                    </div>
-
-                    {group.items.map((item) => {
-                      renderedIndex += 1;
-                      const index = renderedIndex;
-                      const active = index === activeIndex;
-                      return (
-                        <div
-                          key={item.value}
-                          id={optionId(index)}
-                          role="option"
-                          tabIndex={-1}
-                          aria-selected={active}
-                          // 入力欄からフォーカスを奪わない（aria-activedescendant で位置を伝える）
-                          onMouseDown={(event) => event.preventDefault()}
-                          onMouseMove={() => setCursor(index)}
-                          onClick={() => select(item)}
-                          className={cn(
-                            "flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-1.5",
-                            active ? "bg-accent" : "hover:bg-accent/50",
-                          )}
-                        >
-                          <span
-                            aria-hidden="true"
-                            className={cn(
-                              "w-0.5 self-stretch rounded-full",
-                              active ? "bg-primary" : "bg-transparent",
-                            )}
-                          />
-                          <span className="flex min-w-0 flex-1 flex-col">
-                            <span className="truncate text-sm font-medium text-foreground">
-                              {item.label}
-                            </span>
-                            {item.description && (
-                              <span className="truncate text-xs text-muted-foreground">
-                                {item.description}
-                              </span>
-                            )}
-                          </span>
-                          <span className="shrink-0 text-[11px] text-muted-foreground">
-                            {item.kind}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-
-              {loading && (
-                <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
-                  <Spinner />
-                  検索中
+              {scopeKinds.length > 1 && (
+                <div className="overflow-x-auto border-b border-border p-2">
+                  <ButtonGroup
+                    size="sm"
+                    variant="primary"
+                    aria-label="種別で絞り込む"
+                    items={[
+                      { value: ALL_SCOPE_ID, label: allLabel },
+                      ...scopeKinds.map((kind, index) => ({
+                        value: kindScopeId(index),
+                        label: kind,
+                      })),
+                    ]}
+                    value={currentScopeId}
+                    onValueChange={(id) => {
+                      const index = scopeKinds.findIndex((_, i) => kindScopeId(i) === id);
+                      updateScope(index >= 0 ? (scopeKinds[index] as string) : null);
+                    }}
+                  />
                 </div>
               )}
 
-              {showEmpty && (
-                <Empty className="py-8">
-                  <EmptyHeader>
-                    <EmptyTitle className="text-sm">
-                      {emptyMessage ?? `「${currentQuery.trim()}」に一致する項目がありません`}
-                    </EmptyTitle>
-                    {emptySubMessage && (
-                      <EmptyDescription className="text-xs">{emptySubMessage}</EmptyDescription>
-                    )}
-                  </EmptyHeader>
-                </Empty>
-              )}
+              {/* フォーカスは入力欄に留め、位置は aria-activedescendant で伝える
+               * （ARIA 1.2 の combobox パターン）。この一覧と行は Tab の順路に
+               * 入れないため tabIndex は -1 で固定する。 */}
+              <div
+                id={listId}
+                role="listbox"
+                tabIndex={-1}
+                aria-label={ariaLabel ?? placeholder}
+                className="max-h-80 min-h-0 overflow-y-auto p-1.5"
+              >
+                {groups.map((group, groupIndex) => {
+                  const headingId = `${reactId}-group-${groupIndex}`;
+                  return (
+                    <div key={group.kind} role="group" aria-labelledby={headingId}>
+                      <div className="flex items-baseline justify-between gap-2 px-2 pt-2 pb-1">
+                        <span
+                          id={headingId}
+                          className="text-[11px] font-semibold tracking-wide text-muted-foreground"
+                        >
+                          {group.label}
+                        </span>
+                        {hasQuery && (
+                          <span className="text-[11px] text-muted-foreground tabular-nums">
+                            {group.items.length} 件
+                          </span>
+                        )}
+                      </div>
 
-              {showPrompt && (
-                <p className="px-2 py-8 text-center text-sm text-muted-foreground">
-                  {promptMessage}
-                </p>
-              )}
-            </div>
+                      {group.items.map((item) => {
+                        renderedIndex += 1;
+                        const index = renderedIndex;
+                        const active = index === activeIndex;
+                        return (
+                          <div
+                            key={item.value}
+                            id={optionId(index)}
+                            role="option"
+                            tabIndex={-1}
+                            aria-selected={active}
+                            // 入力欄からフォーカスを奪わない（aria-activedescendant で位置を伝える）
+                            onMouseDown={(event) => event.preventDefault()}
+                            onMouseMove={() => setCursor(index)}
+                            onClick={() => select(item)}
+                            className={cn(
+                              "flex cursor-pointer items-center gap-2.5 rounded-sm px-2 py-1.5",
+                              active ? "bg-accent" : "hover:bg-accent/50",
+                            )}
+                          >
+                            <span
+                              aria-hidden="true"
+                              className={cn(
+                                "w-0.5 self-stretch rounded-full",
+                                active ? "bg-primary" : "bg-transparent",
+                              )}
+                            />
+                            <span className="flex min-w-0 flex-1 flex-col">
+                              <span className="truncate text-sm font-medium text-foreground">
+                                {item.label}
+                              </span>
+                              {item.description && (
+                                <span className="truncate text-xs text-muted-foreground">
+                                  {item.description}
+                                </span>
+                              )}
+                            </span>
+                            <span className="shrink-0 text-[11px] text-muted-foreground">
+                              {item.kind}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
 
-            <div className="flex items-center justify-between gap-2 border-t border-border bg-card px-2.5 py-1.5">
-              <span className="text-[11px] text-muted-foreground">{hint}</span>
-              {hasQuery && !loading && (
-                <span className="text-[11px] text-muted-foreground tabular-nums">
-                  {flat.length} 件
-                </span>
-              )}
-            </div>
-          </div>
-        )}
+                {loading && (
+                  <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+                    <Spinner />
+                    検索中
+                  </div>
+                )}
+
+                {showEmpty && (
+                  <Empty className="py-8">
+                    <EmptyHeader>
+                      <EmptyTitle className="text-sm">
+                        {emptyMessage ?? `「${currentQuery.trim()}」に一致する項目がありません`}
+                      </EmptyTitle>
+                      {emptySubMessage && (
+                        <EmptyDescription className="text-xs">{emptySubMessage}</EmptyDescription>
+                      )}
+                    </EmptyHeader>
+                  </Empty>
+                )}
+
+                {showPrompt && (
+                  <p className="px-2 py-8 text-center text-sm text-muted-foreground">
+                    {promptMessage}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-2 border-t border-border bg-card px-2.5 py-1.5">
+                <span className="text-[11px] text-muted-foreground">{hint}</span>
+                {hasQuery && !loading && (
+                  <span className="text-[11px] text-muted-foreground tabular-nums">
+                    {flat.length} 件
+                  </span>
+                )}
+              </div>
+            </div>,
+            portalTarget,
+          )}
       </div>
     );
   },

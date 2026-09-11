@@ -213,4 +213,38 @@ describe("tokens/components.css", () => {
       expect(classesCss.includes(`${templateSelector} {`), `${templateSelector} が無い`).toBe(true);
     });
   });
+
+  /* 横の余白は「外周 12px / 要素間 8px」の 2 値。持ち主が増えると 4 箇所がまたずれる。 */
+  describe("InputGroup の余白", () => {
+    it(".cn-input-group が要素間の gap を持つ（addon の gap は兄弟の input に効かない）", () => {
+      expect(ruleBody(".cn-input-group")).toMatch(/\bgap-x-2\b/);
+    });
+
+    it.each([".cn-input-group-addon-align-inline-start", ".cn-input-group-addon-align-inline-end"])(
+      "%s は負のマージンで addon の箱を枠の外へ出さない",
+      (selector) => {
+        expect(ruleBody(selector)).not.toMatch(/m[lr]-\[-|-m[lr]-/);
+      },
+    );
+
+    it.each(["start", "end"])(
+      "addon がある側（inline-%s）は input の padding を 0 にする",
+      (side) => {
+        const body = ruleBody(
+          `.cn-input-group:has(> .cn-input-group-addon-align-inline-${side}) > .cn-input-group-input`,
+        );
+        expect(body).toMatch(new RegExp(`padding-inline-${side}:\\s*0;`));
+      },
+    );
+  });
+
+  describe("Textarea の余白", () => {
+    it("縦の padding は左右と同じ値から half-leading を引く（Input の py を流用しない）", () => {
+      const body = ruleBody(".cn-textarea");
+      expect(body).not.toMatch(/\bpy-1\.5\b/);
+      expect(body).toMatch(
+        /padding-block:\s*calc\(var\(--spacing\) \* 3\.5 - \(1lh - 1em\) \/ 2\)/,
+      );
+    });
+  });
 });
