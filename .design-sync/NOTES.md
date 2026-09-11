@@ -82,7 +82,15 @@ check が報告するが、実際には修正不要な指摘。**毎回の sync 
 
 ## Cosmetic changes worth knowing about
 
-- **Catalog grouping flattened from curated subgroups to a flat "components" group.** The previously-uploaded project organized cards into `data-display`/`forms`/`actions`/`overlays`/`navigation`/`primitives`/`surfaces` — but every story title in this repo (`stories/components/*.stories.tsx`) is a flat two-level `Components/<Name>`, and group is derived mechanically from the title segment above the component name (`common.mjs#titleParts`). Checked git blame — these titles have always been flat two-level for every file checked, so the old subgrouping was almost certainly hand-curated via a `cfg.titleMap`/fork config from a prior sync we have no record of (see "lost local state" below), not something this repo's stories ever encoded. The driver's diff correctly treated this as a "pure regroup" (its `deletePaths` remove every component's old grouped path alongside the new flat path in `writes`) rather than a contract change, so no grades were lost. If the curated subgroups are wanted back, either restructure story titles to `Components/<Category>/<Name>` in the repo, or reintroduce a group-remapping config — there is currently no `cfg` knob that overrides `group` independent of the title path.
+- **Catalog grouping flattened from curated subgroups to a flat "components" group.** The previously-uploaded project organized cards into `data-display`/`forms`/`actions`/`overlays`/`navigation`/`primitives`/`surfaces` — but every story title in this repo (`stories/components/*.stories.tsx`) is a flat two-level `Components/<Name>`, and group is derived mechanically from the title segment above the component name (`common.mjs#titleParts`). Checked git blame — these titles have always been flat two-level for every file checked, so the old subgrouping was almost certainly hand-curated via a `cfg.titleMap`/fork config from a prior sync we have no record of (see "lost local state" below), not something this repo's stories ever encoded. The driver's diff correctly treated this as a "pure regroup" (its `deletePaths` remove every component's old grouped path alongside the new flat path in `writes`) rather than a contract change, so no grades were lost. If the curated subgroups are wanted back, either restructure story titles to `Components/<Category>/<Name>` in the repo, or reintroduce a group-remapping config — the title-independent knob is a doc frontmatter `category` wired through `cfg.docsMap` (see the 2026-09-11 entry below).
+- **2026-09-11: 表示グループを `misc` → `component` に変更。** Storybook のタイトルが `コンポーネント/<Name>`（日本語）で、
+  `titleParts` はタイトルの上位階層を `[a-z0-9]` に丸めてグループ名にするため空になり、全件 `misc` に落ちていた
+  （上の "components" の項は英語タイトルだった頃の話）。Storybook の日本語ナビを崩さないようタイトルは変えず、
+  converter 公式のグループ上書き手段である doc frontmatter の `category` を使う:
+  `.design-sync/docs/component-group.md`（frontmatter のみ）を `cfg.docsMap` で全コンポーネントから指している。
+  - **本文は空のままにすること。** doc の本文は各 `<Name>.prompt.md` に差し込まれる（`emit.mjs`）ので、書くと 40 件すべてに入る。
+  - **コンポーネントを追加したら `docsMap` にも 1 行足すこと。** 足さないとその 1 件だけ `misc` に落ちる。
+  - regroup は grade 契約の外なので評価はそのまま引き継がれ、旧 `components/misc/*` は diff の `deletePaths` で消える。
 
 ## Re-sync risks
 
