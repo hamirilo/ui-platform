@@ -94,6 +94,23 @@ check が報告するが、実際には修正不要な指摘。**毎回の sync 
 - **`resync.mjs` (the driver) timed out repeatedly (3–10 min) on this repo's first full pass** — likely the render-check/capture phase across 40 components. Fell back to running `package-build.mjs` → `package-validate.mjs` → `storybook/compare.mjs` manually in sequence (all backgrounded, polled via a file-existence loop) instead of the single driver command. This works but loses the driver's automatic diff/anchor-fetch convenience — for a future re-sync, try the driver first but be ready to fall back to the manual sequence if it doesn't return within ~3 min per stage.
 - **`docs: 0/40 components matched` in the build log.** The converter's doc discovery (`cfg.docsMap`/`cfg.dtsPropsFor`) found no matching source docs for any component, so `.prompt.md` content is generated from `.d.ts` + story source only, not from the components' own JSDoc comments (which are often rich, e.g. `Button.tsx`'s variant descriptions). Not a blocker, but a future sync could investigate `cfg.componentSrcMap`/`cfg.docsMap` to surface those JSDoc blocks in the generated prompt docs.
 - **This resync uploaded into the pre-existing "Application UI Kit (synced)" project** (`projectId` recorded in `.design-sync/config.local.json`, gitignored — see [DESIGN.md](../DESIGN.md)) via the atomic path: full writes + 105 explicit deletes of every old `Application*`-prefixed path (verified via `list_files` before AND after — confirmed 0 stale `Application*` paths remain post-upload). `_adherence.oxlintrc.json` and `_ds_manifest.json` are app-managed and were left untouched (not in the plan's writes or deletes).
+- **[GENERAL] 2026-09-11: `bun run format`（`biome check --write .`）が同期の生成物を書き換えた。** Biome 1.9 は
+  `.gitignore` を見ないため、`.design-sync/.cache/previews/*.tsx`（先頭の `// @ds-preview generated` マーカー行が
+  消えた）、`.ds-sync/*.mjs`、`ds-bundle/` まで整形された。症状: build ログに全コンポーネント分
+  `preview modified in the cache — NOT regenerating`。`biome.json` で 3 ディレクトリとも除外したので再発しないはず。
+  もし出たら `rm -rf .design-sync/.cache/previews`（grades の入った `.cache/compare/` は消さない）→ §2.4 で
+  `.ds-sync/` を再 stage → driver 再実行。
+- **`[REFERENCE_STALE?]` は同一セッション内の 2 回目以降の driver 実行で誤検知しうる**（前回実行から preview cache
+  だけが変わり、reference は変わっていない場合）。`grep` で sb-reference の CSS に今回の変更が入っているか確かめてから判断する。
+  `just check` 直後の `storybook-static/` は同じ `storybook build` の出力なので、現在の tree から作られていれば
+  `.design-sync/sb-reference` へコピーして reference の再ビルドに代えてよい。
+- **ScopeSearch は 9 stories。** compare の既定上限は 6 で、7 番目の `InsideClippingContainer`（portal の確認用）が
+  漏れる。2026-09-11 に `--max-stories 9` で全件 image-judged `match`。再キャプチャするときは `--max-stories 9` を付ける。
+- **`conventions.md` のドリフト（2026-09-11 検出、未修正）**: `text-success-foreground` / `text-warning-foreground` /
+  `text-info-foreground` はコンパイル済み CSS に無い（Tailwind v4 は repo 内で使われた utility だけを出力する。
+  `--color-*-foreground` トークン自体は `tokens/tokens.css` にある）。Semantic status 行の「(+ matching `-foreground`)」を
+  実在するクラスだけに絞るか、`var(--color-success-foreground)` 等のトークン参照に書き換える案。conventions.md は
+  人が管理するファイルなので、sync からは書き換えていない。
 
 ## Templates group (added 2026-09)
 
