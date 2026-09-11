@@ -96,7 +96,7 @@ GitHub Packagesへpublishされる実package名は `@<owner>/application-ui-kit`
 ```json
 {
   "dependencies": {
-    "application-ui-kit": "npm:@<owner>/application-ui-kit@^6.0.0"
+    "application-ui-kit": "npm:@<owner>/application-ui-kit@^7.1.0"
   }
 }
 ```
