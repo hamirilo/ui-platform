@@ -167,6 +167,8 @@ const meta = {
 - \`onSelect\` は「移動」に使う。決定後、入力欄には決定したラベルが残る
   （空にしたい場合は \`query\` を制御する）
 - 幅は呼び出し側が決める（既定は親幅いっぱい）
+- 候補パネルは \`document.body\` へ portal で描く。呼び出し側の \`overflow: hidden\` では切れず、
+  下に入りきらなければ上へ開く。**Dialog の中では \`portalContainer\` に Dialog のポップアップ要素を渡す**
         `,
       },
     },
@@ -276,6 +278,24 @@ export const NoResults: Story = {
 /** 操作不可。 */
 export const Disabled: Story = {
   args: { disabled: true, defaultQuery: "課長" },
+};
+
+/**
+ * `overflow: hidden` の中に置いた場合。
+ *
+ * パネルは portal で body へ出すため、カードの下端で切れない。
+ * 画面の下端に近く下へ入りきらないときは上へ開く。
+ */
+export const InsideClippingContainer: Story = {
+  parameters: { controls: { disable: true } },
+  render: (args) => (
+    <div className="max-w-lg overflow-hidden rounded-xl border border-border bg-card p-4">
+      <p className="mb-3 text-sm text-muted-foreground">
+        このカードは overflow: hidden。クリックしてパネルを開く。
+      </p>
+      <ScopeSearch {...args} />
+    </div>
+  ),
 };
 
 /**

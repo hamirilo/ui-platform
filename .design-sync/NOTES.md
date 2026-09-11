@@ -43,6 +43,11 @@ check が報告するが、実際には修正不要な指摘。**毎回の sync 
     `--lk-state-active`（同）、`--icon-empty`（`tokens/icon-metrics.generated.css`）。
     兄弟の `--lk-icon-air` / `--lk-icon-gap` / `--lk-icon-inset` / `--lk-state-*-on-fill` /
     `--icon-box` / `--icon-fix` は check に分類できている。
+  - **2026-09-11（7.0.0 同期分）**: 利用側の `check_design_system` で (1) 145件 / (2) 633 中 149件（38種）。
+    修正の方向は「同期側のトークン走査で `--tw-` プレフィックスを無視する」「`_ds_bundle.css` 等の
+    ビルド生成物ではなく手書きの `tokens/*.css` だけを走査する」の 2 点。どちらも converter / driver 側の
+    変更で、source 側（`tokens/*.css` やコンパイル出力への `/* @kind other */` 追記）では直さない
+    （コンパイル出力への追記はビルドのたびに消える）。下の「却下した案」も参照。
 
 - **[GENERAL] 「ダークテーマ未定義」は誤検知。対応不要。** `.dark` スコープの surface /
   foreground / border 上書きセットは `tokens/theme.css` の `.dark` ブロックに定義済みで、
@@ -96,3 +101,16 @@ check が報告するが、実際には修正不要な指摘。**毎回の sync 
   同期側は `Templates/<Name>` として扱われる想定。画面全体を描くため 900x700 の既定ビューポートでは
   切れる。`cfg.overrides.<Name>.viewport` を 1280x800 以上にするか、Templates グループを同期対象から外す。
 - `stories/templates/_shell.tsx` は `_` 始まりで Story 収集対象外（Storybook 専用のシェル見本）。
+
+## Claude Design templates（`.design-sync/templates/`, added 2026-09-11）
+
+- カードパターン集 / 指標カード / カラートークンの 3 点。Claude Design の design agent が使う
+  `.dc.html` テンプレートで、上の Storybook Templates とは別物。別プロジェクト（旧
+  JazmfDx…@6.0.0）で作ったものを、トークン名をこの Kit に置き換えて取り込んだ。
+- converter の生成物には含まれない。同期先の `templates/<name>/` へ **このディレクトリをそのまま
+  write する**。**再同期の plan で `templates/**` を deletes に入れないこと**。
+- `support.js` は Claude Design の dc-runtime の生成物（編集しない。3 つとも同一内容）。
+  `ds-base.js` は `../..` から `fonts/fonts.css` / `_ds_bundle.css` / `styles.css` / `_ds_bundle.js` を読む。
+  biome の対象外にしてある（`biome.json`）。
+- `card-patterns/Card-titleRule-handoff.md` は Card へ `titleRule` / `footerVariant` を足す仕様で、
+  **未実装**。見本は Card の現行 API ではなくインライン style で描いている。

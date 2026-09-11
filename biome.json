@@ -6,7 +6,10 @@
       "**/storybook-static/**",
       "**/.storybook/**",
       "**/components/ui/**",
-      "**/stories/**"
+      "**/stories/**",
+      "**/.design-sync/**",
+      "**/.ds-sync/**",
+      "**/ds-bundle/**"
     ]
   },
   "linter": {

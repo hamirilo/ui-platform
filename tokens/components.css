@@ -456,13 +456,31 @@
            disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60;
   }
 
+  /* 縦の padding は .cn-input の値（h-8 に収めるための 6px）を流用しない。
+   * 複数行では half-leading（(line-height - font-size) / 2）が文字の上に乗るため、
+   * 6px だと見た目の上余白が 6 + 3 = 9px になり、左右 14px に対して文字が上に寄って見えていた。
+   * 見た目の余白が四辺で揃うよう、左右と同じ 3.5 から half-leading を引く
+   * （text-sm の 14px / 20px では 14 - 3 = 11px）。1lh - 1em で求めるので文字サイズを変えても揃う。
+   *
+   * ネイティブの resize グリップは border-box の右下角に描かれ、rounded-lg の角丸からはみ出す
+   * （padding を足してもグリップの位置は動かない）。field-sizing: content で内容に合わせて
+   * 伸びるブラウザではグリップ自体が要らないので消す。非対応ブラウザは高さが rows で
+   * 固定になるため、縦方向だけ残す。 */
   .cn-textarea {
-    @apply w-full rounded-lg border border-input bg-card px-3.5 py-1.5 text-sm
+    @apply w-full rounded-lg border border-input bg-card px-3.5 text-sm
            text-foreground transition-colors
            placeholder:text-muted-foreground
            focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
            aria-invalid:border-danger aria-invalid:focus-visible:ring-danger
            disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60;
+    padding-block: calc(var(--spacing) * 3.5 - (1lh - 1em) / 2);
+    resize: vertical;
+  }
+
+  @supports (field-sizing: content) {
+    .cn-textarea {
+      resize: none;
+    }
   }
 
   /* 色は指定しない（上流も指定していない）。
@@ -914,7 +932,6 @@
     @apply inline-flex items-center justify-center text-muted-foreground
            transition-colors hover:text-foreground;
   }
-
   .cn-combobox-trigger-icon {
     @apply size-4 shrink-0 text-muted-foreground;
   }
@@ -1200,9 +1217,19 @@
    * ====================================================================== */
 
   /* nova は h-8 の低い入力欄を前提にしている。このリポジトリの入力欄は
-   * .cn-input（h-8 px-3.5）なので、アイコンの有無で高さが変わらないよう揃える。 */
+   * .cn-input（h-8 px-3.5）なので、アイコンの有無で高さが変わらないよう揃える。
+   *
+   * <important>
+   * 横の余白は「外周 = 3（12px）/ 要素間 = gap-x-2（8px）」の 2 値で決める。
+   * - 外周: addon がある側は addon の padding（pl-3 / pr-3）が持つ
+   * - 要素間: group の column-gap が持つ。addon の gap は addon の子どうしにしか効かず、
+   *   input は addon の子ではなく兄弟なので、アイコン〜文字の間はここで空ける
+   * 以前は input が px-3.5 を持ったまま addon と並んでいたため、「枠〜アイコン」
+   * 「アイコン〜文字」「文字〜×」「×〜枠」の 4 箇所がすべてずれていた。
+   * addon が無い側だけは input の px-3.5 を残す（下の .cn-input-group-input を参照）。
+   * </important> */
   .cn-input-group {
-    @apply h-8 w-full rounded-lg border border-input bg-card transition-colors
+    @apply h-8 w-full gap-x-2 rounded-lg border border-input bg-card transition-colors
            focus-within:border-ring focus-within:ring-2 focus-within:ring-ring
            has-[[aria-invalid=true]]:border-danger
            has-disabled:cursor-not-allowed has-disabled:bg-muted has-disabled:opacity-60
@@ -1231,11 +1258,23 @@
   }
 
   .cn-input-group-addon-align-inline-end {
-    @apply pr-3 has-[>button]:mr-[-0.3rem];
+    @apply pr-3;
   }
 
   .cn-input-group-addon-align-inline-start {
-    @apply pl-3 has-[>button]:ml-[-0.3rem];
+    @apply pl-3;
+  }
+
+  /* アイコンボタン（× など）は 24px のヒット領域の中央にアイコンを描くため、
+   * そのまま置くとボタンの内側の空き（(24px - アイコン) / 2）だけ外周・要素間が広がる。
+   * 左右をその分だけ負のマージンで戻し、アイコンの見た目の位置を 12px / 8px に揃える。
+   * アイコンの実寸は --icon-box（ボタンのサイズクラスや .cn-combobox-clear が宣言する）から取る。
+   * 戻す量は addon の padding より小さいので、ボタンが枠の外へ出ることはない
+   * （以前の has-[>button]:mr-[-0.3rem] は addon の箱ごと group の外へ 3.8px 押し出し、
+   * クリックで入力欄へフォーカスする addon の領域が枠の外にはみ出していた）。 */
+  .cn-input-group-addon-align-inline-start > .cn-input-group-button-size-icon-xs,
+  .cn-input-group-addon-align-inline-end > .cn-input-group-button-size-icon-xs {
+    margin-inline: calc((var(--icon-box) - var(--spacing) * 6) / 2);
   }
 
   .cn-input-group-button {
@@ -1254,11 +1293,23 @@
     @apply h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5;
   }
 
-  /* px は .cn-input と同値（1em = 14px）。ここだけ 12px だとアイコン付き入力欄と
-   * 素の入力欄で文字の開始位置がずれる。 */
+  /* 外周の padding は addon が無い側だけに持たせる。addon がある側は addon の padding が
+   * 外周を持つので 0 にする（残すと group の gap に上乗せされる）。
+   * addon の有無は DOM 順ではなく :has で見る（Combobox は input を先に置き、
+   * addon を order で並べ替えている）。
+   * addon が無い側の px-3.5 は .cn-input と同値。ここを 12px にすると、アイコン付き入力欄と
+   * 素の入力欄を縦に並べたときに文字の開始位置がずれる。 */
   .cn-input-group-input {
     @apply h-full flex-1 border-0 bg-transparent px-3.5 py-0 shadow-none outline-none
            focus-visible:border-0 focus-visible:ring-0;
+  }
+
+  .cn-input-group:has(> .cn-input-group-addon-align-inline-start) > .cn-input-group-input {
+    padding-inline-start: 0;
+  }
+
+  .cn-input-group:has(> .cn-input-group-addon-align-inline-end) > .cn-input-group-input {
+    padding-inline-end: 0;
   }
 
   .cn-input-group-text {

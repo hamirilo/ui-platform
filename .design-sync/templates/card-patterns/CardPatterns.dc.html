@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="カードパターン集" description="タイトル行の下に罫線を引くカードの型 — 集計・一覧・進捗・アラート・人物・設定" -->
+<helmet><script src="./ds-base.js"></script><style>body{margin:0;background:var(--color-background)}a{color:var(--color-primary);text-decoration:none}a:hover{color:var(--color-primary-hover)}</style></helmet>
+<div style="font-family:var(--font-sans);color:var(--color-foreground);padding:32px;display:flex;flex-direction:column;gap:24px;max-width:1120px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<h1 style="font-size:var(--text-xl);line-height:var(--text-xl--line-height);font-weight:var(--font-weight-semibold);letter-spacing:-0.01em;margin:0">カードパターン集</h1>
+<p style="font-size:var(--text-sm);line-height:var(--text-sm--line-height);color:var(--color-muted-foreground);margin:0;max-width:60ch;text-wrap:pretty">中身の種類が変わっても、タイトル行とその下の罫線は共通。罫線はカード幅いっぱい（左右のパディング分だけ外に出す）で、色を持たせるのはカテゴリや警告を示す時だけ。</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+<div style="width:352px;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px">
+<span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2">申請ステータス</span>
+<span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">今月</span>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:1px;background:var(--color-border);margin:0 -16px"></div></sc-if>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--color-border);margin:12px 0 0;border-radius:var(--radius-lg);overflow:hidden">
+<div style="background:var(--color-card);padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span style="font-size:var(--text-xs);color:var(--color-blue-700)">新規</span><span style="font-size:1.375rem;font-weight:var(--font-weight-bold);line-height:1">14</span></div>
+<div style="background:var(--color-card);padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span style="font-size:var(--text-xs);color:var(--color-primary)">進行中</span><span style="font-size:1.375rem;font-weight:var(--font-weight-bold);line-height:1">32</span></div>
+<div style="background:var(--color-card);padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span style="font-size:var(--text-xs);color:var(--color-success-active)">完了</span><span style="font-size:1.375rem;font-weight:var(--font-weight-bold);line-height:1">128</span></div>
+</div>
+</div>
+<div style="width:352px;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px">
+<span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2">承認待ち<span style="color:var(--color-muted-foreground);font-weight:var(--font-weight-medium);margin-left:6px">3</span></span>
+<a href="#" style="font-size:var(--text-xs);font-weight:var(--font-weight-medium)">すべて表示</a>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:1px;background:var(--color-border);margin:0 -16px"></div></sc-if>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--color-border)"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:var(--text-sm);font-weight:var(--font-weight-medium)">出張旅費 精算</span><span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">畜産部・佐藤</span></div><span style="font-size:var(--text-xs);color:var(--color-muted-foreground);flex-shrink:0">08-24</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--color-border)"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:var(--text-sm);font-weight:var(--font-weight-medium)">仕入単価 改定申請</span><span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">営業一課・田中</span></div><span style="font-size:var(--text-xs);color:var(--color-muted-foreground);flex-shrink:0">08-23</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0"><div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:var(--text-sm);font-weight:var(--font-weight-medium)">与信枠 見直し</span><span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">管理部・鈴木</span></div><span style="font-size:var(--text-xs);color:var(--color-muted-foreground);flex-shrink:0">08-21</span></div>
+</div>
+</div>
+<div style="width:352px;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:7px;padding-bottom:10px">
+<span style="width:9px;height:9px;border-radius:50%;background:var(--color-primary);flex-shrink:0"></span>
+<span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2">月次入力 進捗</span>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:2px;background:var(--color-primary);margin:0 -16px"></div></sc-if>
+<div style="display:flex;align-items:baseline;gap:8px;padding-top:12px"><span style="font-size:1.75rem;font-weight:var(--font-weight-bold);line-height:1;letter-spacing:-0.01em">68%</span><span style="font-size:var(--text-sm);color:var(--color-muted-foreground)">17 / 25 拠点</span></div>
+<div style="height:6px;border-radius:999px;background:var(--color-muted);margin-top:12px;overflow:hidden"><div style="width:68%;height:100%;border-radius:999px;background:var(--color-primary)"></div></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;font-size:var(--text-xs);color:var(--color-muted-foreground)"><span>締切 2026-08-31</span><span>残り 6 日</span></div>
+</div>
+<div style="width:352px;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px">
+<span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2;color:var(--color-danger-active)">在庫アラート</span>
+<span style="font-size:var(--text-xs);font-weight:var(--font-weight-medium);color:var(--color-danger-active);background:var(--color-red-50);border-radius:999px;padding:2px 9px">要対応 2</span>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:2px;background:var(--color-danger);margin:0 -16px"></div></sc-if>
+<div style="display:flex;flex-direction:column;gap:8px;padding-top:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span style="font-size:var(--text-sm)">冷蔵庫A 温度逸脱</span><span style="font-size:var(--text-sm);font-weight:var(--font-weight-semibold);color:var(--color-danger)">+3.2℃</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span style="font-size:var(--text-sm)">枝肉在庫 賞味期限 3日以内</span><span style="font-size:var(--text-sm);font-weight:var(--font-weight-semibold)">18 件</span></div>
+<p style="font-size:var(--text-xs);line-height:1.5;color:var(--color-muted-foreground);margin:2px 0 0">最終確認 2026-08-25 08:40 / 担当 品質管理課</p>
+</div>
+</div>
+<div style="width:352px;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;align-items:center;gap:10px;padding-bottom:12px">
+<span style="width:38px;height:38px;border-radius:50%;background:var(--color-blue-50);color:var(--color-blue-700);display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);font-weight:var(--font-weight-semibold);flex-shrink:0">田中</span>
+<div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2">田中 誠一</span><span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">営業一課 / 課長</span></div>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:1px;background:var(--color-border);margin:0 -16px"></div></sc-if>
+<div style="display:grid;grid-template-columns:auto 1fr;gap:6px 14px;padding-top:12px;font-size:var(--text-sm)">
+<span style="color:var(--color-muted-foreground)">内線</span><span>2418</span>
+<span style="color:var(--color-muted-foreground)">拠点</span><span>本社 3F</span>
+<span style="color:var(--color-muted-foreground)">担当</span><span>量販・外食チャネル</span>
+</div>
+</div>
+<div style="width:352px;border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;flex-direction:column;gap:2px;padding-bottom:10px">
+<span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2">通知設定</span>
+<span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">この端末にのみ適用されます</span>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:1px;background:var(--color-border);margin:0 -16px"></div></sc-if>
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-border)"><span style="font-size:var(--text-sm)">承認依頼をメールで受け取る</span><span style="width:36px;height:20px;border-radius:999px;background:var(--color-primary);padding:2px;display:flex;justify-content:flex-end;flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:var(--color-primary-foreground)"></span></span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0"><span style="font-size:var(--text-sm)">相場更新のプッシュ通知</span><span style="width:36px;height:20px;border-radius:999px;background:var(--color-muted);padding:2px;display:flex;flex-shrink:0"><span style="width:16px;height:16px;border-radius:50%;background:var(--color-card);box-shadow:0 1px 2px 0 #00000026"></span></span></div>
+</div>
+</div>
+</div>
+<div style="border-radius:var(--radius-xl);border:1px solid var(--color-border);background:var(--color-card);box-shadow:0 1px 3px 0 #0000001a,0 1px 2px -1px #0000001a;padding:16px;overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:10px">
+<span style="font-size:0.9375rem;font-weight:var(--font-weight-semibold);line-height:1.2">部門別 売上（上位）</span>
+<span style="font-size:var(--text-xs);color:var(--color-muted-foreground)">2026年7月度</span>
+</div>
+<sc-if value="{{ showRules }}" hint-placeholder-val="{{ true }}"><div style="height:1px;background:var(--color-border);margin:0 -16px"></div></sc-if>
+<table style="width:100%;border-collapse:collapse;font-size:var(--text-sm);margin-top:4px">
+<thead><tr><th style="text-align:left;padding:10px 0;font-weight:var(--font-weight-medium);color:var(--color-muted-foreground);font-size:var(--text-xs);border-bottom:1px solid var(--color-border)">部門</th><th style="text-align:right;padding:10px 0;font-weight:var(--font-weight-medium);color:var(--color-muted-foreground);font-size:var(--text-xs);border-bottom:1px solid var(--color-border)">売上</th><th style="text-align:right;padding:10px 0;font-weight:var(--font-weight-medium);color:var(--color-muted-foreground);font-size:var(--text-xs);border-bottom:1px solid var(--color-border)">前年比</th><th style="text-align:right;padding:10px 0;font-weight:var(--font-weight-medium);color:var(--color-muted-foreground);font-size:var(--text-xs);border-bottom:1px solid var(--color-border)">構成比</th></tr></thead>
+<tbody>
+<tr><td style="padding:11px 0;border-bottom:1px solid var(--color-border)">量販チャネル</td><td style="padding:11px 0;text-align:right;border-bottom:1px solid var(--color-border);font-variant-numeric:tabular-nums">¥412,880,000</td><td style="padding:11px 0;text-align:right;border-bottom:1px solid var(--color-border);color:var(--color-success-active);font-weight:var(--font-weight-semibold)">+8.4%</td><td style="padding:11px 0;text-align:right;border-bottom:1px solid var(--color-border);color:var(--color-muted-foreground)">41.2%</td></tr>
+<tr><td style="padding:11px 0;border-bottom:1px solid var(--color-border)">外食チャネル</td><td style="padding:11px 0;text-align:right;border-bottom:1px solid var(--color-border);font-variant-numeric:tabular-nums">¥268,140,000</td><td style="padding:11px 0;text-align:right;border-bottom:1px solid var(--color-border);color:var(--color-danger);font-weight:var(--font-weight-semibold)">−2.1%</td><td style="padding:11px 0;text-align:right;border-bottom:1px solid var(--color-border);color:var(--color-muted-foreground)">26.8%</td></tr>
+<tr><td style="padding:11px 0">加工・二次卸</td><td style="padding:11px 0;text-align:right;font-variant-numeric:tabular-nums">¥184,300,000</td><td style="padding:11px 0;text-align:right;color:var(--color-success-active);font-weight:var(--font-weight-semibold)">+3.7%</td><td style="padding:11px 0;text-align:right;color:var(--color-muted-foreground)">18.4%</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:900},&quot;showRules&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;タイトル罫線&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { showRules: this.props.showRules ?? true };
+  }
+}
+</script>
+</body>
+</html>
