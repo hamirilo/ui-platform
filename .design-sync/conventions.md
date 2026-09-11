@@ -15,7 +15,9 @@ Never use raw colors (`bg-blue-600`, `#2563eb`, arbitrary `oklch(...)`) in new l
 | Secondary / muted surfaces | `bg-muted`, `text-muted-foreground`, `bg-secondary`, `text-secondary-foreground` |
 | Body text / default surface | `text-foreground`, `bg-background`, `bg-card`, `text-card-foreground` |
 | Borders / focus | `border-border`, `ring-ring` |
-| Semantic status | `bg-destructive` / `text-destructive-foreground` (danger), `bg-success`, `bg-warning`, `bg-info` (+ matching `-foreground`) |
+| Semantic status | `bg-destructive` / `text-destructive-foreground` / `text-destructive` (danger), `bg-success` / `text-success`, `bg-warning`, `bg-info` — fills only: success / warning / info have **no** `-foreground` or `border-*` utility in the shipped CSS |
+
+The shipped stylesheet contains only the utility classes this kit itself uses, so a Tailwind class that isn't listed here may simply not exist and render unstyled. For status-colored UI, don't hand-assemble colors — use `Badge` (`tone`: `new` / `active` / `done` / `warning` / `danger` / `pending` / `neutral`) for status labels and `Alert` (`tone`: `info` / `success` / `warning` / `danger`) for messages; they already pair the fill with the right text and border colors.
 
 Use these for any layout glue (containers, spacing wrappers, custom sections) you build around the library components. Don't reach for the `cn-*` classes in `tokens/components.css` (`cn-button`, `cn-card`, `cn-badge`, …) directly — those are the internal skin for this repo's own `components/ui/*` primitives; compose UI from this kit's exported components instead (`Button`, `Input`, `Dialog`, etc.), which already wrap them with this system's semantics (e.g. `variant="primary" | "secondary" | "danger" | "success" | "ghost" | "link"` instead of raw shadcn variant names).
 
