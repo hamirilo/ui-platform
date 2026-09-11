@@ -106,11 +106,13 @@ check が報告するが、実際には修正不要な指摘。**毎回の sync 
   `.design-sync/sb-reference` へコピーして reference の再ビルドに代えてよい。
 - **ScopeSearch は 9 stories。** compare の既定上限は 6 で、7 番目の `InsideClippingContainer`（portal の確認用）が
   漏れる。2026-09-11 に `--max-stories 9` で全件 image-judged `match`。再キャプチャするときは `--max-stories 9` を付ける。
-- **`conventions.md` のドリフト（2026-09-11 検出、未修正）**: `text-success-foreground` / `text-warning-foreground` /
-  `text-info-foreground` はコンパイル済み CSS に無い（Tailwind v4 は repo 内で使われた utility だけを出力する。
-  `--color-*-foreground` トークン自体は `tokens/tokens.css` にある）。Semantic status 行の「(+ matching `-foreground`)」を
-  実在するクラスだけに絞るか、`var(--color-success-foreground)` 等のトークン参照に書き換える案。conventions.md は
-  人が管理するファイルなので、sync からは書き換えていない。
+- **`conventions.md` のドリフト（2026-09-11 検出・修正済み）**: `text-success-foreground` / `text-warning-foreground` /
+  `text-info-foreground` がコンパイル済み CSS に無かった。Tailwind v4 は repo 内で使われた utility と、使われた
+  `@theme` 変数だけを出力するため（`--color-info-foreground` は `tokens/tokens.css` に定義があるのに出力されない）。
+  トークン参照（`var(--color-*-foreground)`）への書き換えでは info が直らないので、Semantic status 行を実在する
+  クラスだけに絞り、状態色の UI は `Badge` / `Alert` の `tone` へ誘導する形にした。
+  **再同期のたびに、conventions.md のクラス名を `ds-bundle/_ds_bundle.css` へ grep して確かめること**
+  （例に無いクラスは design agent の画面で無スタイルになる）。
 
 ## Templates group (added 2026-09)
 
