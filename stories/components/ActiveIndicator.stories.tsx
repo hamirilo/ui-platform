@@ -14,6 +14,10 @@ const meta = {
 選択中の項目を示す装飾用インジケーターです。単体では操作を持たず、親要素に \`relative\` を設定して使います。
 \`layoutId\` を共有した要素間では shared layout animation が働きます。
 選択状態そのものは親側の \`aria-current\` などで伝えてください。
+
+framer-motion に依存します（import した利用側のバンドルに gzip で約 40 kB 加わります）。
+ページ遷移がフルリロードになる構成ではアニメーションが見えないため、ナビゲーションには
+静的な背景を持つ \`NavItem\` を使い、移動を見せたい場合だけ \`AnimatedNavItem\` を使ってください。
         `,
       },
     },

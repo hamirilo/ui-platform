@@ -81,7 +81,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | toast | 補助的なフィードバック（`alert()` を使わない） |
 | Table | 一覧。空状態が必須の API |
 | RadioTable | 表から1行を選ばせる。プラン・送付先など列で比較して決める選択 |
-| Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション |
+| Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション。NavItem のアクティブ背景を項目間で動かしたい（同じページ内で切り替える）ときだけ AnimatedNavItem（framer-motion を含む） |
 | Badge / ActiveIndicator | 状態表示 |
 | Alert | 継続して伝える注意・案内（フォーム全体のエラー、未完了の設定、権限による制限）。ページ幅のお知らせは `variant="banner"` |
 | PageHeader / Breadcrumbs | 画面の見出し領域（見出し・説明・主操作・タブ）と現在位置 |
