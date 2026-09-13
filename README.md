@@ -139,7 +139,17 @@ Django Templates + htmxのApplication向けに、React Componentを部分的にm
 
 ```ts
 import 'application-ui-kit/islands/auto-mount'
+import { registerIslandComponents, registerIslandLoaders } from 'application-ui-kit/islands'
+
+registerIslandComponents({ 'my-widget': MyWidget })
+registerIslandLoaders({ 'heavy-widget': () => import('./HeavyWidget').then((m) => m.HeavyWidget) })
 ```
+
+- kit標準のIsland（`date-picker` / `tabs` / `toast-listener` 等）は遅延読み込みで登録され、ページに現れたものだけを読み込みます。
+- アプリが同じ名前を登録していれば、登録順に関係なくアプリの登録を使います。
+- 最初の走査はentryの評価が終わった後に走るので、同じentryの中で同期的に登録すれば間に合います。登録の前に `await` がある場合はauto-mountを使わず、登録後に `islands` entryの `registerDefaultIslands()` と `startIslandAutoMount()` を呼びます。
+
+判断の背景は [ADR-0008](decisions/adr-0008-keep-unused-heavy-dependencies-out-of-consumer-bundles.md) を参照してください。
 
 認証、業務認可、Application固有endpoint、domain data取得は利用側の責務です。汎用packageへ焼き込みません。
 
