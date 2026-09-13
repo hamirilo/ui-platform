@@ -6,7 +6,8 @@
   "description": "verify-package.sh 用の最小利用側プロジェクト。実アプリの input.css / islands 構成を模して、tarball 化した配布物が非巻き上げレイアウトでもビルドできることを確認する。",
   "scripts": {
     "build:css": "tailwindcss -i backend/static/css/input.css -o backend/static/css/output.css",
-    "build:islands": "vite build"
+    "build:islands": "vite build",
+    "check:bundle": "vite build -c vite.bundle.config.ts && node check-bundle.mjs"
   },
   "dependencies": {
     "react": "^19.1.0",

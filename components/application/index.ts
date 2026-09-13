@@ -130,6 +130,10 @@ export type {
 export { NavItem } from "./NavItem";
 export type { NavItemProps, NavItemColor } from "./NavItem";
 
+// framer-motion を使うのはこの 2 つだけ。NavItem から参照しないこと（decisions/adr-0008）。
+export { AnimatedNavItem } from "./AnimatedNavItem";
+export type { AnimatedNavItemProps } from "./AnimatedNavItem";
+
 export { ActiveIndicator } from "./ActiveIndicator";
 export type { ActiveIndicatorProps } from "./ActiveIndicator";
 

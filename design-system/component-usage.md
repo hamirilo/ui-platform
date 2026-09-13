@@ -29,6 +29,7 @@
 | 状態表示 | Badge / ActiveIndicator |
 | 日付入力 | DatePicker |
 | ページ送り | Pagination |
+| サイドバー等のナビゲーション項目 | NavItem。同じページ内で active を切り替えて背景の移動を見せるときだけ AnimatedNavItem（framer-motion をバンドルに含む。フルリロードの画面では動きが見えない） |
 | 値のコピー | CopyButton（テンプレートなら Islands の copy-field）。ワンタイム URL 等は値が見える入力欄と組にする |
 | 種類をまたぐ横断検索 | ScopeSearch。1 種類だけの絞り込みは SearchInput |
 

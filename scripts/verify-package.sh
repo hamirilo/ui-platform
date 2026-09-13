@@ -8,6 +8,9 @@
 # CI の `bun run build` はこのリポジトリの node_modules を使うので、
 # この種の宣言漏れを検出できない。
 #
+# 一部だけを import した利用側で、使わない重い依存が初期ロードに入らないことも確認する
+# （NavItem だけなら framer-motion なし、auto-mount だけなら DatePicker の依存なし。decisions/adr-0008）。
+#
 # 併せて、Tailwind の CSS が利用側へ届くことも確認する。
 #   - tokens/theme.css の @import 連鎖（motion / fonts / scale / tokens / components / classes）
 #   - theme.css の `@source "../components"`（パッケージ内の .tsx のクラス名）
@@ -73,6 +76,9 @@ npm install --install-strategy=nested --no-audit --no-fund
 
 echo "▶ npm run build:islands (dist の JS と、宣言済み依存だけで解決できるか)"
 npm run build:islands
+
+echo "▶ npm run check:bundle (一部だけ import したとき、使わない重い依存が初期ロードに入らないか)"
+npm run check:bundle
 
 echo "▶ npm run build:css (theme.css の @import と @source が届くか)"
 npm run build:css
