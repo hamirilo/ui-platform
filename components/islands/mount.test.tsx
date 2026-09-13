@@ -56,6 +56,24 @@ describe("island registry の優先順位", () => {
     expect(islands.getIslandComponent("tabs")).toBe(Other);
   });
 
+  it("アプリの登録どうしは、関数の種類に関係なく後から登録したものが勝つ", async () => {
+    const islands = await loadIslands();
+
+    // コンポーネント → loader: 読み込み前の状態に戻る
+    islands.registerIslandComponents({ widget: Hello });
+    islands.registerIslandLoaders({ widget: () => Promise.resolve(Other) });
+    expect(islands.getIslandComponent("widget")).toBeNull();
+    await expect(islands.loadIslandComponent("widget")).resolves.toBe(Other);
+
+    // loader（読み込み済み）→ コンポーネント
+    islands.registerIslandComponents({ widget: Hello });
+    expect(islands.getIslandComponent("widget")).toBe(Hello);
+
+    // 同じ関数どうしも後勝ち
+    islands.registerIslandComponents({ widget: Other });
+    expect(islands.getIslandComponent("widget")).toBe(Other);
+  });
+
   it("キット標準は遅延登録で、読み込むまで getIslandComponent は null を返す", async () => {
     const islands = await loadIslands();
     islands.registerDefaultIslands();

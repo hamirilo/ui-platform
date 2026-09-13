@@ -66,6 +66,10 @@ tree-shakingで確実に落とせるのはmodule単位で分けたときだけ�
   読み込みが終わるまで、マウント先にはサーバーが描いた中身がそのまま残る。読み込み中は `data-react-mounted="pending"` を付け、
   htmxのスワップによる再走査で二重に読み込まない。読み込み中に要素がDOMから外れたらマウントしない。
 - アプリも `registerIslandLoaders()` で同じ遅延読み込みを使える。
+- **アプリの層の中は後勝ちとする。** `registerIslandComponents()` と `registerIslandLoaders()` は同じ表を共有し、
+  同じ名前を登録すると関数の種類に関係なく前の登録を置き換える（読み込み済みのコンポーネントも捨てる）。
+  警告は出さない。テストで差し替えたり、画面ごとに実装を切り替えたりする用途を妨げないためで、
+  従来の `registerIslandComponents()` も後勝ちだった。層をまたぐ場合（アプリとkit標準）だけは順番に関係なくアプリが勝つ。
 - マウント処理を副作用のない `mount.tsx` へ移し、`islands` entryから `mountIsland` / `initializeIslands` /
   `startIslandAutoMount` / `registerDefaultIslands` / `registerIslandLoaders` / `loadIslandComponent` をexportする。
   `auto-mount` は `registerDefaultIslands()` と `startIslandAutoMount()` を呼ぶだけのentryになる。

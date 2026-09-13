@@ -12,6 +12,13 @@
  * アプリが自前の `date-picker` を持っていても、auto-mount の読み込み順で
  * キット標準に上書きされることはありません（decisions/adr-0008）。
  *
+ * <important>
+ * アプリの層の中では **後から登録したものが勝ちます**。registerIslandComponents() と
+ * registerIslandLoaders() は同じ表を共有しており、同じ名前を登録すると、関数の種類に関係なく
+ * 前の登録（読み込み済みのコンポーネントを含む）を黙って置き換えます。警告は出しません。
+ * 1 つの名前はどちらか一方で 1 回だけ登録してください。
+ * </important>
+ *
  * 業務ドメイン固有の UI はこのパッケージには追加せず、アプリ側で登録します。
  */
 
@@ -49,6 +56,9 @@ function resolveEntry(name: string): IslandEntry | undefined {
 /**
  * Island コンポーネントを登録する。同じ名前のキット標準より優先される。
  *
+ * アプリの登録どうしは後勝ち。先に registerIslandComponents() / registerIslandLoaders() で
+ * 同じ名前を登録していれば、ここで置き換わる。
+ *
  * @example
  * ```ts
  * import { registerIslandComponents } from 'application-ui-kit/islands'
@@ -64,6 +74,9 @@ export function registerIslandComponents(components: Record<string, IslandCompon
 /**
  * 初回マウント時に読み込む Island を登録する。同じ名前のキット標準より優先される。
  * 読み込みが終わるまで、マウント先の要素にはサーバーが描いた中身がそのまま残る。
+ *
+ * アプリの登録どうしは後勝ち。先に registerIslandComponents() / registerIslandLoaders() で
+ * 同じ名前を登録していれば、ここで置き換わる（読み込み済みでも読み込み前の状態に戻る）。
  *
  * @example
  * ```ts

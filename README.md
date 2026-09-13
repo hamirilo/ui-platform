@@ -147,6 +147,7 @@ registerIslandLoaders({ 'heavy-widget': () => import('./HeavyWidget').then((m) =
 
 - kit標準のIsland（`date-picker` / `tabs` / `toast-listener` 等）は遅延読み込みで登録され、ページに現れたものだけを読み込みます。
 - アプリが同じ名前を登録していれば、登録順に関係なくアプリの登録を使います。
+- アプリの登録どうしは **後から登録したものが勝ちます**。`registerIslandComponents()` と `registerIslandLoaders()` は同じ表を共有するため、同じ名前をどちらで登録しても前の登録を置き換えます（警告は出ません）。1つの名前はどちらか一方で1回だけ登録してください。
 - 最初の走査はentryの評価が終わった後に走るので、同じentryの中で同期的に登録すれば間に合います。登録の前に `await` がある場合はauto-mountを使わず、登録後に `islands` entryの `registerDefaultIslands()` と `startIslandAutoMount()` を呼びます。
 
 判断の背景は [ADR-0008](decisions/adr-0008-keep-unused-heavy-dependencies-out-of-consumer-bundles.md) を参照してください。
