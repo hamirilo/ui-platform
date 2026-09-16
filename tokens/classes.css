@@ -108,6 +108,16 @@
       border-color: var(--color-ring);
       box-shadow: 0 0 0 2px var(--color-ring);
     }
+    /* エラーは .cn-input と同じく枠の色で示す。テンプレート側だけこれが無いと、
+       サーバーが aria-invalid を付けても赤枠にならず、React 画面と見た目が割れる。
+       文言との結線（aria-describedby）は利用側 Form の責務。 */
+    &[aria-invalid="true"] {
+      border-color: var(--color-danger);
+      &:focus {
+        border-color: var(--color-danger);
+        box-shadow: 0 0 0 2px var(--color-danger);
+      }
+    }
   }
 
   /* textarea は行数で高さが決まるため、.input-field の h-8 を打ち消す。 */

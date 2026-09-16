@@ -59,7 +59,9 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
 
 <ClassSample
   sample={`<input type="text" class="input-field" placeholder="件名" style="max-width: 20rem">
-<select class="input-field" style="max-width: 12rem"><option>選択してください</option></select>`}
+<select class="input-field" style="max-width: 12rem"><option>選択してください</option></select>
+<input type="text" class="input-field" aria-invalid="true" value="foo@" style="max-width: 20rem">`}
+  note="エラーはサーバーが aria-invalid 属性を付ける。枠の色はクラスが持つ（React の Input と同じ）。エラー文言との結線は aria-describedby で利用側が行う。"
 />
 
 ## バッジ
