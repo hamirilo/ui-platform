@@ -18,14 +18,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: 変更検出
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - '!**.md'
+              - '!decisions/**'
+
   check:
     name: 型検査・テスト・ビルド
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
       - name: bun のセットアップ
         uses: oven-sh/setup-bun@v2
+
+      - name: Bun キャッシュ
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
       # 依存はすべて public レジストリから取得できる。
       - name: 依存のインストール
@@ -79,3 +107,18 @@ jobs:
           path: storybook-static
           retention-days: 30
           if-no-files-found: error
+
+  ci:
+    name: ci
+    if: always()
+    needs: [changes, check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 先行ジョブの結果を判定する
+        env:
+          RESULTS: ${{ join(needs.*.result, ',') }}
+        run: |
+          echo "$RESULTS"
+          case "$RESULTS" in
+            *failure*|*cancelled*) exit 1 ;;
+          esac

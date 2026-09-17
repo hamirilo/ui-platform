@@ -1,0 +1,98 @@
+name: Release Please
+
+# main へ入った Conventional Commits から version・CHANGELOG・tag・GitHub Release を作り、
+# Release PR がマージされてリリースが作成されたら自動で GitHub Packages へ npm publish する。
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release:
+    # fork では実行しない (fork は upstream の tag を同期するだけで独自の version を切らない)。
+    if: github.event.repository.fork == false
+    runs-on: ubuntu-latest
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v5
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish:
+    name: npm publish (auto)
+    needs: release
+    if: needs.release.outputs.releases_created == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: bun のセットアップ
+        uses: oven-sh/setup-bun@v2
+
+      - name: Bun キャッシュ
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: 依存のインストール
+        run: bun install --frozen-lockfile
+
+      # npm のスコープは小文字でなければならない。GitHub の owner 名は
+      # 大文字を含み得るため、ここで小文字化しておく。
+      - name: パッケージ名を決める
+        id: pkg
+        run: |
+          SCOPE="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          BASE="$(node -p "require('./package.json').name.split('/').pop()")"
+          echo "scope=@${SCOPE}" >> "$GITHUB_OUTPUT"
+          echo "name=@${SCOPE}/${BASE}" >> "$GITHUB_OUTPUT"
+
+      - name: 検証
+        run: |
+          bun run typecheck
+          bun run test
+          bun run lint
+          bun run build
+          bun run verify:package
+
+      - name: Node のセットアップ
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "${{ steps.pkg.outputs.scope }}"
+
+      - name: パッケージ名を repository owner の scope へ合わせる
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const path = "./package.json";
+            const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
+            const name = process.argv[1];
+            if (pkg.name !== name) {
+              pkg.name = name;
+              fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+            }
+          ' "${{ steps.pkg.outputs.name }}"
+
+      - name: publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
