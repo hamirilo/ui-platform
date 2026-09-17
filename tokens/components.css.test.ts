@@ -208,10 +208,23 @@ describe("tokens/components.css", () => {
       [".cn-steps", ".steps"],
       [".cn-step-marker", ".step-marker"],
       [".cn-table-container-sticky", ".data-table-scroll"],
+      [".cn-input", ".input-field"],
     ])("%s（React）と %s（テンプレート）の両方が定義されている", (cnSelector, templateSelector) => {
       expect(css.includes(`${cnSelector} {`), `${cnSelector} が無い`).toBe(true);
       expect(classesCss.includes(`${templateSelector} {`), `${templateSelector} が無い`).toBe(true);
     });
+  });
+
+  /* エラーの見せ方は React とテンプレートで割れやすい。片方だけ赤枠が出ないと、
+   * 同じ Django Form を React 画面とテンプレート画面で出したときに差が見える。 */
+  it(".cn-input と .input-field の両方が aria-invalid で枠を danger にする", () => {
+    expect(ruleBody(".cn-input")).toMatch(/aria-invalid:border-danger/);
+    // .input-field はネストした &:focus を持つので ruleBody では最後まで取れない。
+    const start = classesCss.indexOf(".input-field {");
+    expect(start, ".input-field が見つからない").toBeGreaterThan(-1);
+    const block = classesCss.slice(start, classesCss.indexOf("textarea.input-field", start));
+    expect(block).toMatch(/&\[aria-invalid="true"\]/);
+    expect(block).toMatch(/var\(--color-danger\)/);
   });
 
   /* 横の余白は「外周 12px / 要素間 8px」の 2 値。持ち主が増えると 4 箇所がまたずれる。 */

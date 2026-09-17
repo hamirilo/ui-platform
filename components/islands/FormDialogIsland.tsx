@@ -51,7 +51,7 @@
  * ```
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "../application/Dialog";
 import { toast } from "../application/Toast";
 import "./types";
@@ -124,8 +124,19 @@ export function FormDialogIsland({
 }: FormDialogIslandProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  // htmx が取得した Django テンプレートの HTML を差し込むコンテナ
-  const bodyRef = useRef<HTMLDivElement>(null);
+  /**
+   * htmx が取得した Django テンプレートの HTML を差し込むコンテナ。
+   *
+   * <important>
+   * ref オブジェクトではなく state で持つ。ダイアログの中身は Base UI の Portal の
+   * 中にあり、`open` が true になった最初のコミットではまだマウントされていない。
+   * `useRef` だと下の effect が走る時点で `current` が null で、依存配列
+   * `[open, formUrl]` は変わらないまま二度と再実行されず、**中身が空のダイアログが
+   * 開いたままになる**。callback ref で state に入れると、Portal の中身が付いた
+   * ときに再レンダリングが起きて effect が走り直す。
+   * </important>
+   */
+  const [body, setBody] = useState<HTMLDivElement | null>(null);
 
   // 開閉トリガーを登録（CustomEvent / window.openFormDialog）
   useEffect(() => {
@@ -157,7 +168,7 @@ export function FormDialogIsland({
   // ダイアログを開いたら htmx で Django からフォーム HTML を取得して差し込む
   useEffect(() => {
     if (!open) return;
-    const container = bodyRef.current;
+    const container = body;
     const htmx = window.htmx;
     if (!container || !htmx) return;
 
@@ -177,12 +188,12 @@ export function FormDialogIsland({
           '<p class="text-sm text-destructive">フォームの読み込みに失敗しました。</p>';
         setLoading(false);
       });
-  }, [open, formUrl]);
+  }, [open, body, formUrl]);
 
   // フォーム送信の成否を htmx イベントで受け取る
   useEffect(() => {
     if (!open) return;
-    const container = bodyRef.current;
+    const container = body;
     if (!container) return;
 
     // 成功イベント（Django View が HX-Trigger で返す）
@@ -227,7 +238,7 @@ export function FormDialogIsland({
       document.body.removeEventListener("htmx:beforeRequest", handleBeforeRequest);
       document.body.removeEventListener("htmx:afterRequest", handleAfterRequest);
     };
-  }, [open, successEvent, successMessage, reloadOnSuccess, redirectUrl]);
+  }, [open, body, successEvent, successMessage, reloadOnSuccess, redirectUrl]);
 
   return (
     <Dialog
@@ -239,10 +250,15 @@ export function FormDialogIsland({
     >
       {/* React は枠だけ。中身は htmx が Django から取得した HTML をそのまま表示する。
           confirmText / cancelText / footer を渡さないため、フッターは描画されない
-          （送信ボタンは Django Form 側の HTML が持つ）。 */}
-      <div ref={bodyRef} className="application-form-dialog-body">
-        {loading && <p className="text-sm text-muted-foreground">読み込み中...</p>}
-      </div>
+          （送信ボタンは Django Form 側の HTML が持つ）。
+
+          <important>
+          読み込み表示はコンテナの「外」に置く。同じ要素の子を React と htmx の
+          両方が持つと、htmx が innerHTML を入れ替えたあとに React が自分の子を
+          消そうとして `removeChild` が失敗する。コンテナの中は htmx だけが触る。
+          </important> */}
+      {loading && <p className="text-sm text-muted-foreground">読み込み中...</p>}
+      <div ref={setBody} className="application-form-dialog-body" />
     </Dialog>
   );
 }

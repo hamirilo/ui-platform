@@ -107,7 +107,7 @@ Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / To
 | テンプレート用クラス | React 側 | 用途 |
 |---|---|---|
 | `.btn-primary` / `.btn-secondary` / `.btn-success` / `.btn-danger`（`.btn-xs` / `.btn-sm` / `.btn-lg`） | Button | 操作 |
-| `.input-field` | Input / Select / Textarea | フォーム入力 |
+| `.input-field` | Input / Select / Textarea | フォーム入力。エラーは `aria-invalid` を付けると枠が danger になる（React 側と同じ） |
 | `.card` / `.card-sm` / `.card-lg` | Card | 面 |
 | `.badge` + `.badge-{tone}` | Badge `tone` | 状態表示。`models.py` の `*_display_class` は tone クラス名を返す |
 | `.alert` + `.alert-{tone}`（`.alert-banner`） | Alert | 継続して伝える注意・案内 |
