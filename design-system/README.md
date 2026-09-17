@@ -86,6 +86,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | Alert | 継続して伝える注意・案内（フォーム全体のエラー、未完了の設定、権限による制限）。ページ幅のお知らせは `variant="banner"` |
 | PageHeader / Breadcrumbs | 画面の見出し領域（見出し・説明・主操作・タブ）と現在位置 |
 | Stat | KPI・統計タイル（ラベル・値・単位・増減） |
+| Rating | 星の評価。`onChange` を渡すと入力、渡さなければ表示専用。一覧の表示専用はテンプレートの `.rating` |
 | FileDropZone | ファイルの選択・ドロップ・事前チェック（種類・サイズ・件数）。Django の input と組むなら Islands の `file-drop-zone` |
 | Steps | 手順の進み具合（done / current / error / upcoming）。ウィザードや申請フロー |
 | DescriptionList | 詳細画面の項目名と値。空は「—」 |
@@ -125,6 +126,9 @@ Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / To
 | `.steps` / `.step` / `.step-done` / `.step-current` / `.step-error` | Steps | 手順の進み具合 |
 | `textarea.input-field` | Textarea | 複数行入力（React 版は文字数カウンタも持つ） |
 | `.avatar-sm` / `.avatar-md` / `.avatar-lg` | Avatar | 人・システムの丸いアイコン（20 / 28 / 36px） |
+| `.rating` / `.rating-star` / `.rating-star-empty` / `.rating-value` | Rating / Islands `rating` | 星の評価。表示はサーバー、入力は Island（hidden input へ書き戻す） |
+| `.empty` / `.empty-media` / `.empty-title` / `.empty-description` / `.empty-content` | Empty | データが無いときの面。次の操作があるときだけ `.empty-content` |
+| `.item-group` / `.item` / `.item-media` / `.item-content` / `.item-title` / `.item-description` / `.item-actions` | Item / ItemGroup | 一覧の 1 行。列で読み比べるなら `.data-table` |
 | `.filter-bar` / `.filter-bar-field` / `.htmx-indicator` | 対応なし（レイアウト。パターン/一覧表の絞り込み行と同じ配置） | 一覧の上の絞り込み |
 
 - テンプレートでは上のクラスを使い、同じ部品を raw utility の組み合わせや独自 CSS で再実装しない。

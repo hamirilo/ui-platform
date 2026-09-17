@@ -209,6 +209,11 @@ describe("tokens/components.css", () => {
       [".cn-step-marker", ".step-marker"],
       [".cn-table-container-sticky", ".data-table-scroll"],
       [".cn-input", ".input-field"],
+      [".cn-rating", ".rating"],
+      [".cn-rating-star-empty", ".rating-star-empty"],
+      [".cn-empty-title", ".empty-title"],
+      [".cn-item-group", ".item-group"],
+      [".cn-item-description", ".item-description"],
     ])("%s（React）と %s（テンプレート）の両方が定義されている", (cnSelector, templateSelector) => {
       expect(css.includes(`${cnSelector} {`), `${cnSelector} が無い`).toBe(true);
       expect(classesCss.includes(`${templateSelector} {`), `${templateSelector} が無い`).toBe(true);

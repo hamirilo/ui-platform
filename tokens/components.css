@@ -1403,6 +1403,68 @@
   }
 
   /* ========================================================================
+   * MARK: Rating — Rating（星の評価）
+   *
+   * テンプレート側の .rating（classes.css）と 1:1。
+   * 星の色は --color-warning。raw な amber を足さない（暗所も Token で追従する）。
+   * 大きさは --rating-size の 1 値から星・間隔・当たり判定まで導く。
+   * ====================================================================== */
+
+  .cn-rating {
+    @apply inline-flex items-center;
+    --rating-size: 1.25rem;
+    gap: calc(var(--rating-size) * 0.125);
+  }
+
+  .cn-rating-sm {
+    --rating-size: 0.875rem;
+  }
+
+  .cn-rating-md {
+    --rating-size: 1.25rem;
+  }
+
+  .cn-rating-lg {
+    --rating-size: 1.75rem;
+  }
+
+  .cn-rating-item {
+    @apply inline-flex shrink-0 cursor-pointer items-center justify-center rounded p-0.5;
+    background-color: transparent;
+    border: 0;
+    &:focus-visible {
+      outline: 2px solid var(--color-ring);
+      outline-offset: 1px;
+    }
+    &:disabled {
+      cursor: not-allowed;
+      color: var(--color-disabled-foreground);
+    }
+  }
+
+  .cn-rating-star {
+    @apply inline-flex shrink-0 items-center justify-center;
+    width: var(--rating-size);
+    height: var(--rating-size);
+    font-size: var(--rating-size);
+    line-height: 1;
+    color: var(--color-warning);
+  }
+
+  .cn-rating-star > svg {
+    @apply size-full;
+  }
+
+  .cn-rating-star-empty {
+    color: color-mix(in oklab, var(--color-muted-foreground) 45%, transparent);
+  }
+
+  .cn-rating-value {
+    @apply ml-1.5 text-sm tabular-nums;
+    color: var(--color-muted-foreground);
+  }
+
+  /* ========================================================================
    * MARK: Pagination — shadcn/ui 標準（style-nova.css より移設）
    *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
    * ====================================================================== */

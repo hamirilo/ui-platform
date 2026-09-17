@@ -33,6 +33,9 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
     [<Code>description-list</Code>, <Code>DescriptionList</Code>, '詳細画面の項目名と値'],
     [<Code>steps / step / step-done / step-current / step-error</Code>, <Code>Steps</Code>, '手順の進み具合'],
     [<Code>avatar-sm / avatar-md / avatar-lg</Code>, <Code>Avatar</Code>, 'アバター（20 / 28 / 36px）'],
+    [<Code>rating / rating-star / rating-value</Code>, <><Code>Rating</Code> / Islands <Code>rating</Code></>, '星の評価（表示はサーバー、入力は Island）'],
+    [<Code>empty / empty-title / empty-description / empty-content</Code>, <Code>Empty</Code>, 'データが無いときの面'],
+    [<Code>item-group / item / item-title / item-description / item-actions</Code>, <><Code>Item</Code> / <Code>ItemGroup</Code></>, '一覧の 1 行（表で読み比べないもの）'],
   ]}
 />
 
@@ -259,4 +262,49 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
 </table>
 </div>`}
   note="並び替えは th[aria-sort] の中のリンク（サーバーへ ?sort= を送る）。ascending / descending / none で矢印が変わる。固定ヘッダは data-table-scroll で包み --table-max-height を与える。選択行は tr[aria-selected=true]。"
+/>
+
+## 星の評価
+
+<ClassSample
+  sample={`<span class="rating rating-sm" role="img" aria-label="評価: 5 段階中 4">
+  <span class="rating-star">★</span><span class="rating-star">★</span><span class="rating-star">★</span><span class="rating-star">★</span>
+  <span class="rating-star rating-star-empty">☆</span>
+  <span class="rating-value">4</span>
+</span>`}
+  note="一覧に並ぶ表示専用の星はサーバーが描く（React を何十個も載せない）。入力は Islands の rating で hidden input へ書き戻す。"
+/>
+
+## データが無いとき
+
+<ClassSample
+  sample={`<div class="empty" style="width: 100%">
+  <p class="empty-title">まだ記録がありません</p>
+  <p class="empty-description">行ってみたら、良くても悪くても残しておくと次の自分が助かります。</p>
+  <div class="empty-content"><button type="button" class="btn-primary">対象を登録</button></div>
+</div>`}
+  note="有効な次の操作があるときだけ empty-content を置く。操作が無いなら説明だけで止める。"
+/>
+
+## 一覧の 1 行
+
+<ClassSample
+  sample={`<div class="item-group" style="width: 100%">
+  <a class="item" href="#">
+    <span class="item-media"><span class="badge badge-danger">もう行かない</span></span>
+    <span class="item-content">
+      <span class="item-title">◯◯食堂</span>
+      <span class="item-description">店・場所 ・ 東京都千代田区</span>
+    </span>
+    <span class="item-actions"><span class="rating rating-sm"><span class="rating-star">★</span><span class="rating-star rating-star-empty">☆</span></span></span>
+  </a>
+  <a class="item item-outline" href="#">
+    <span class="item-media"><span class="badge badge-done">また行く</span></span>
+    <span class="item-content">
+      <span class="item-title">△△ベーカリー</span>
+      <span class="item-description">店・場所 ・ 記録 3 件</span>
+    </span>
+  </a>
+</div>`}
+  note="列で読み比べる一覧は data-table。1 行の中で見出しと補足が縦に積まれるものはこちら。行全体をリンク（a 要素に item）にできる。"
 />

@@ -155,6 +155,9 @@ export type { PageHeaderProps } from "./PageHeader";
 export { Stat } from "./Stat";
 export type { StatProps, StatTone } from "./Stat";
 
+export { Rating } from "./Rating";
+export type { RatingProps, RatingSize } from "./Rating";
+
 export { FileDropZone } from "./FileDropZone";
 export type { FileDropZoneProps } from "./FileDropZone";
 
