@@ -1,6 +1,8 @@
 name: Publish
 
-# GitHub Packages へ application-ui-kit を公開する。
+# GitHub Packages へ application-ui-kit を公開する手動・タグトリガー用ワークフロー。
+# 通常のリリースは release-please.yml が PR マージ時に自動でタグ作成と publish を行います。
+# このファイルは workflow_dispatch による手動公開や既存リリースタグの再実行用フォールバックとして保持します。
 #
 # UI Platform repository のreleaseとnpm packageのreleaseを分離する。
 # - v1.0.0                              -> UI Platform repository release。package publishは行わない

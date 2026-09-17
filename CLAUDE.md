@@ -41,6 +41,12 @@ Django + htmxとの汎用的な接続は `./islands` / `./islands/auto-mount` en
 - 共通化するComponentにはStoryを追加する。Patternは候補を比較できるCatalog Storyを優先する。
 - **branchは `upstream/main` から切り、PRはupstream宛に出す。** `main` はupstreamのmirrorとして保つ。fork運用とversionの扱いは [decisions/adr-0002](decisions/adr-0002-fork-branch-and-upstream-flow.md) を正とする。
 
+## CI とリリース
+
+- **CI (`.github/workflows/ci.yml`)**: PR と `main` への push で実行。変更検出（`changes`）により、ドキュメントのみの変更時はビルド・テストをスキップして即座に集約ジョブ `ci` が完了する。
+- **リリース (`.github/workflows/release-please.yml`)**: `main` への squash merge を契機に Release Please が version 更新（`package.json`）・`CHANGELOG.md`・Release PR を管理。Release PR をマージすると tag（`application-ui-kit-vX.Y.Z`）と GitHub Release が作成され、GitHub Packages への npm publish が自動実行される。
+- **PR タイトル**: Conventional Commits 形式（`feat:`, `fix:`, etc.）を必須とする（`.github/workflows/pr-title.yml`）。
+
 ## 検証
 
 通常の変更では次を通す。
