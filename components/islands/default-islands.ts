@@ -5,7 +5,7 @@
  * DatePickerIsland（react-day-picker / date-fns）は読み込まれません。
  * 利用側のバンドラは各 Island を別チャンクに分けます（decisions/adr-0008）。
  *
- *   値を書き戻す・fetch する島   date-picker / copy-field / file-drop-zone / confirm-dialog / form-dialog
+ *   値を書き戻す・fetch する島   date-picker / rating / copy-field / file-drop-zone / confirm-dialog / form-dialog
  *   見せ方だけの島               tabs / disclosure / field-visibility
  *   ページに 1 つ置く窓口         toast-listener / confirm-host
  *
@@ -54,6 +54,9 @@ export const defaultIslandDefinitions: Readonly<Record<string, DefaultIslandDefi
   },
   "field-visibility": {
     load: () => import("./FieldVisibilityIsland").then((m) => m.FieldVisibilityIsland),
+  },
+  rating: {
+    load: () => import("./RatingIsland").then((m) => m.RatingIsland),
   },
 };
 

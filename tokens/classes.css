@@ -991,6 +991,169 @@
   }
 
   /* ========================================
+   * MARK: Rating — React の <Rating> と 1:1（星の評価）
+   *
+   * 表示専用（サーバーが描く一覧の星）:
+   *
+   * <span class="rating rating-sm" role="img" aria-label="評価: 5 段階中 4">
+   *   <span class="rating-star">★</span>… <span class="rating-star rating-star-empty">☆</span>
+   *   <span class="rating-value">4</span>
+   * </span>
+   *
+   * 入力は Islands の `rating`（hidden input へ書き戻す）。一覧に並ぶ表示専用の星を
+   * Island にしない: 見た目が変わるだけのものに React を何十個も載せても得がない。
+   * .rating-star は ★ の文字でも <svg> でも同じ大きさになる。
+   * ======================================== */
+
+  .rating {
+    @apply inline-flex items-center;
+    --rating-size: 1.25rem;
+    gap: calc(var(--rating-size) * 0.125);
+  }
+
+  .rating-sm {
+    --rating-size: 0.875rem;
+  }
+
+  .rating-lg {
+    --rating-size: 1.75rem;
+  }
+
+  .rating-star {
+    @apply inline-flex shrink-0 items-center justify-center;
+    width: var(--rating-size);
+    height: var(--rating-size);
+    font-size: var(--rating-size);
+    line-height: 1;
+    color: var(--color-warning);
+  }
+
+  .rating-star > svg {
+    @apply size-full;
+  }
+
+  .rating-star-empty {
+    color: color-mix(in oklab, var(--color-muted-foreground) 45%, transparent);
+  }
+
+  .rating-value {
+    @apply ml-1.5 text-sm tabular-nums;
+    color: var(--color-muted-foreground);
+  }
+
+  /* ========================================
+   * MARK: Empty — React の <Empty> と 1:1（データが無いときの面）
+   *
+   * <div class="empty">
+   *   <div class="empty-media empty-media-icon"><svg …></svg></div>
+   *   <p class="empty-title">まだ記録がありません</p>
+   *   <p class="empty-description">行ってみたら残しておくと、次の自分が助かります。</p>
+   *   <div class="empty-content"><a class="btn-primary" href="…">対象を登録</a></div>
+   * </div>
+   *
+   * 有効な次の操作があるときだけ .empty-content を置く（design-system/README §4）。
+   * ======================================== */
+
+  .empty {
+    @apply flex w-full min-w-0 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-6 text-center;
+    border-color: var(--color-border);
+    color: var(--color-foreground);
+  }
+
+  .empty-media {
+    @apply mb-2 flex shrink-0 items-center justify-center;
+  }
+
+  .empty-media-icon {
+    @apply mb-2 flex size-8 shrink-0 items-center justify-center rounded-lg;
+    background-color: var(--color-muted);
+    color: var(--color-foreground);
+  }
+
+  .empty-media-icon > svg {
+    @apply size-4;
+  }
+
+  .empty-title {
+    @apply text-sm font-medium tracking-tight;
+  }
+
+  .empty-description {
+    @apply text-sm/relaxed;
+    color: var(--color-muted-foreground);
+  }
+
+  .empty-content {
+    @apply flex w-full max-w-sm min-w-0 flex-col items-center gap-2.5 text-sm;
+  }
+
+  /* ========================================
+   * MARK: Item — React の <Item> / <ItemGroup> と 1:1（一覧の 1 行）
+   *
+   * <div class="item-group">
+   *   <a class="item" href="…">
+   *     <span class="item-media"><span class="badge badge-danger">もう行かない</span></span>
+   *     <div class="item-content">
+   *       <p class="item-title">店の名前</p>
+   *       <p class="item-description">住所・分類など</p>
+   *     </div>
+   *     <div class="item-actions"><span class="rating rating-sm">…</span></div>
+   *   </a>
+   * </div>
+   *
+   * 表（列で読み比べる）は .data-table。1 行の中で見出しと補足が縦に積まれる
+   * 一覧はこちら。行全体をリンクにできる（<a class="item">）。
+   * ======================================== */
+
+  .item-group {
+    @apply flex w-full flex-col gap-2;
+  }
+
+  .item {
+    @apply flex w-full flex-wrap items-center gap-2.5 rounded-lg border border-transparent px-3 py-2.5 text-sm transition-colors;
+    color: var(--color-foreground);
+  }
+
+  a.item:hover,
+  button.item:hover {
+    background-color: var(--color-muted);
+  }
+
+  .item:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  .item-outline {
+    border-color: var(--color-border);
+  }
+
+  .item-muted {
+    background-color: color-mix(in oklab, var(--color-muted) 50%, transparent);
+  }
+
+  .item-media {
+    @apply flex shrink-0 items-center gap-2 self-start;
+  }
+
+  .item-content {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+  }
+
+  .item-title {
+    @apply flex items-center gap-2 text-sm leading-snug font-medium;
+  }
+
+  .item-description {
+    @apply text-sm leading-normal;
+    color: var(--color-muted-foreground);
+  }
+
+  .item-actions {
+    @apply flex shrink-0 items-center gap-2;
+  }
+
+  /* ========================================
    * MARK: Filter Bar — 一覧の上の絞り込み（テンプレート/一覧画面（テンプレート版））
    *
    * <form class="filter-bar" hx-get="…" hx-target="#table" hx-trigger="change, input delay:400ms" hx-push-url="true">

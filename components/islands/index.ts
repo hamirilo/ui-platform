@@ -62,6 +62,9 @@ export type { DisclosureIslandProps } from "./DisclosureIsland";
 
 export { FieldVisibilityIsland } from "./FieldVisibilityIsland";
 
+export { RatingIsland } from "./RatingIsland";
+export type { RatingIslandProps } from "./RatingIsland";
+
 export { runConfirmedRequest } from "../../lib/confirm-request";
 export type { ConfirmRequestSpec, HttpMethod } from "../../lib/confirm-request";
 

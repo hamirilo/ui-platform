@@ -92,7 +92,7 @@ describe("island registry の優先順位", () => {
     islands.registerDefaultIslands();
 
     const names = Object.keys(islands.defaultIslandDefinitions);
-    expect(names).toHaveLength(10);
+    expect(names).toHaveLength(11);
     for (const name of names) {
       const component = await islands.loadIslandComponent(name);
       const exportName = `${name.replace(/(^|-)(\w)/g, (_, __, c: string) => c.toUpperCase())}Island`;
