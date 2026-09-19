@@ -114,6 +114,52 @@ check が報告するが、実際には修正不要な指摘。**毎回の sync 
   **再同期のたびに、conventions.md のクラス名を `ds-bundle/_ds_bundle.css` へ grep して確かめること**
   （例に無いクラスは design agent の画面で無スタイルになる）。
 
+- **2026-09-18: 上の drift が逆向きに動いた（未修正・要判断）。** 7.2.0 の build では
+  `text-success-foreground` / `text-warning-foreground` / `text-info-foreground` が
+  **`_ds_bundle.css` に存在する**（`.text-info-foreground{color:var(--color-info-foreground)}` の形）。
+  `tokens/classes.css`（空状態・一覧行のテンプレート用クラス）と `tokens/components.css` が
+  `var(--color-*-foreground)` を使うようになり、Tailwind v4 が該当 utility を出力するようになったため。
+  つまり conventions.md の「success / warning / info には `-foreground` が **無い**」という記述は
+  今の build では不正確。ただし *安全な方向* のズレ（存在するクラスを「使うな」と言っているだけで、
+  無スタイルにはならない）で、`Badge` / `Alert` の `tone` へ誘導する方針自体は今も有効。
+  2026-09-11 に**意図的に**狭めた行なので、この sync では**書き換えていない**。広げ直すかは人間の判断。
+  なお `bg-*-foreground` と `border-success` / `border-warning` / `border-info` は **今も存在しない**
+  （記述どおり）。次回も同じ grep で両方向を確認すること。
+
+- **[GENERAL] Catalog の group が `misc` なのは story title が日本語だから。** `.ds-sync/lib/common.mjs`
+  の `titleParts()` が group を `parts[idx-1].toLowerCase().replace(/[^a-z0-9]+/g,'-')` で作るため、
+  `コンポーネント/<Name>` の `コンポーネント` は全部落ちて空文字になり、`|| 'misc'` に落ちる。
+  `cfg.titleMap` は name しか変えられず group には効かない（上の "Cosmetic changes" 参照）。
+  Catalog 上の見出しを意味のあるものにしたいなら story title を `Components/<Name>` 等の ASCII にするしかなく、
+  それは Storybook 側の見た目を変える。**converter の version で fallback 名が変わりうる**点に注意:
+  2026-09-11 時点のローカル `ds-bundle` は group=`component` だったが、今回の skill version では `misc`。
+  group 名が変わると diff が「全件 regroup」になり `deletePaths` が巨大になる（今回は remote と同じ `misc`
+  だったので `deletePaths` は 0 件）。
+
+- **2026-09-18 の resync は安価だった（driver 1 発で完走）。** 38 carried / 2 changed
+  (`ActiveIndicator`, `NavItem`) / 1 added (`Rating`) / 0 removed、`deletePaths` 0 件。
+  上の「driver が 3–10 分で timeout する」という記録は**この回には当てはまらなかった**
+  ——`resync.mjs` を background で回せば build→diff→validate→capture まで通しで完走する（各回 ~9 分）。
+  次回もまず driver を素直に 1 回流すこと。
+- **`Rating` に viewport override は不要。** Overview の storybook 実描画は 473px で既定 700 に収まる
+  （`sips -g pixelHeight` で確認済み）。`cfg.overrides` に足さないこと。
+- **canary の spot-check 対象は driver 実行ごとに引き直される。** 1 回目は
+  Pagination/ConfirmDialog/DescriptionList/Combobox/Checkbox、2 回目（receipt 用の再実行）は
+  Pagination/Dropdown/Breadcrumbs/Dialog/Accordion。**再実行するたびに新しい 5 件を見ろという意味ではない**。
+  今回は計 9 コンポーネントを目視して divergence 0 だったので carried grades をそのまま採用した。
+  churn の原因が「CSS が純粋な追加のみ（`git diff --numstat` で削除 0 行）」と確認できていれば、
+  spot-check は 1 周で十分。
+- **remote の anchor をローカルの `ds-bundle/_ds_sync.json` で代用しないこと。** `.design-sync/.cache/remote-sync.json`
+  が無い状態で resync を始めると `DesignSync(get_file, "_ds_sync.json")` の結果を手で書き出す必要がある。
+  ローカルの sidecar は**別 build の産物**でありうる（今回は group が `component` vs remote `misc` で
+  `sourceHashes` の key が 120 件全部食い違った）。`renderHashes` / `sourceKeys` / `styleSha` /
+  `scriptsSha` が一致することを確認してから使うか、素直に fetch 内容を書き写す。
+- **同期先に app / 人間が管理するファイルがある。deletes に入れてはいけない。**
+  `templates/**`（上の「Claude Design templates」）、`uploads/**`（貼り付け画像）、
+  `_ds_manifest.json`、`_adherence.oxlintrc.json`、`design-fixes-prompt.md`。
+  anchored resync では `deletePaths` を diff から verbatim で渡すので通常は自動的に守られる
+  （今回は 0 件だったので `deletes: []` で finalize した）。
+
 ## Templates group (added 2026-09)
 
 - `stories/templates/*.stories.tsx` はタイトルが `テンプレート/<Name>` の 2 階層で、Components とは別グループ。
