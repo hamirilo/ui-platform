@@ -140,6 +140,9 @@ export type { ActiveIndicatorProps } from "./ActiveIndicator";
 export { ThemeToggle } from "./ThemeToggle";
 export type { ThemeToggleProps } from "./ThemeToggle";
 
+export { ProductSwitcher } from "./ProductSwitcher";
+export type { ProductSwitcherProps, ProductSwitcherItem } from "./ProductSwitcher";
+
 export { CopyButton, copyTextToClipboard } from "./CopyButton";
 export type { CopyButtonProps, CopyResult } from "./CopyButton";
 

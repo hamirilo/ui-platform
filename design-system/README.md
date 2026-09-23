@@ -95,6 +95,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | Pagination（`totalCount` / `pageSizeOptions`） | 件数表記「N 件中 a–b 件」と表示件数の切替 |
 | Dropdown | メニュー |
 | ThemeToggle | ライト/ダーク切替 |
+| ProductSwitcher | 同じ組織の別プロダクトへ移る（ヘッダー右上）。一覧は items で渡し、取得はしない |
 
 **shadcn/ui をそのまま公開している部品:** Card / Spinner / Progress /
 Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / Tooltip / Popover / Avatar
