@@ -612,8 +612,11 @@
     @apply w-full;
   }
 
+  /* 項目が親より多いときは横にスクロールさせる（折り返さない）。
+   * overflow を付けると border-b が選択中の下線（-mb-px で重ねていた）を切るので、下線は内側の影で引く。 */
   .cn-tabs-list {
-    @apply inline-flex items-center gap-1 border-b border-border;
+    @apply inline-flex max-w-full items-center justify-start gap-1 overflow-x-auto
+           shadow-[inset_0_-1px_0_var(--color-border)] [scrollbar-width:none];
   }
 
   .cn-tabs-list-variant-default {
@@ -628,11 +631,10 @@
   .cn-tabs-trigger {
     --icon-box: 1rem;
     column-gap: calc(0.875rem * var(--lk-icon-gap));
-    @apply -mb-px inline-flex items-center border-b-2 border-transparent px-3 py-2
+    @apply inline-flex items-center border-b-2 border-transparent px-3 py-2
            text-sm font-medium text-muted-foreground transition-colors
            hover:text-foreground
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
-           focus-visible:ring-offset-2
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring
            data-active:border-primary data-active:text-primary
            data-disabled:cursor-not-allowed data-disabled:opacity-50;
   }
@@ -675,9 +677,12 @@
            data-closed:animate-out data-closed:fade-out-0;
   }
 
+  /* 狭い画面・背の低い画面でも操作ボタンが画面外へ出ないよう、画面の内側（上下左右 0.75rem）に収めて
+   * 中身をスクロールさせる。最大幅（max-w-*）は Dialog の maxWidth が上書きする。 */
   .cn-dialog-content {
-    @apply fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2
-           gap-4 rounded-lg border border-border bg-background p-6 shadow-lg outline-none
+    @apply fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-1.5rem)] max-w-lg -translate-x-1/2 -translate-y-1/2
+           max-h-[calc(100dvh-1.5rem)] overflow-y-auto overscroll-contain
+           gap-4 rounded-lg border border-border bg-background p-4 shadow-lg outline-none sm:p-6
            duration-200
            data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
            data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
@@ -695,8 +700,12 @@
     @apply text-sm text-muted-foreground;
   }
 
+  /* sm 未満では中身をスクロールしても操作ボタンが見えるよう、下端に留める。
+   * 負のマージンは .cn-dialog-content の余白（p-4）と同じ値。 */
   .cn-dialog-footer {
-    @apply flex flex-col-reverse gap-2 sm:flex-row sm:justify-end;
+    @apply flex flex-col-reverse gap-2 sm:flex-row sm:justify-end
+           max-sm:sticky max-sm:-bottom-4 max-sm:-mx-4 max-sm:-mb-4 max-sm:border-t max-sm:border-border
+           max-sm:bg-background max-sm:px-4 max-sm:py-3;
   }
 
   .cn-dialog-close {
