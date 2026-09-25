@@ -1174,13 +1174,15 @@
     background-color: var(--color-card);
   }
 
+  /* 狭い画面（< sm）では 1 項目 1 行にして幅いっぱいに広げる。
+     中身の幅のままだと選択肢の長さで欄の幅がばらつき、右に大きな空きが残る。 */
   .filter-bar-field {
-    @apply flex min-w-40 flex-col gap-1 text-xs font-medium;
+    @apply flex min-w-40 flex-col gap-1 text-xs font-medium max-sm:basis-full;
     color: var(--color-muted-foreground);
   }
 
   .filter-bar-field > .input-field {
-    @apply w-auto;
+    @apply w-auto max-sm:w-full;
   }
 
   /* htmx のリクエスト中だけ見せる（htmx が .htmx-request を付ける） */
