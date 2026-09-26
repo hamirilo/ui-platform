@@ -52,11 +52,12 @@ export type { ToastOptions, ToastType } from "./Toast";
 export { Dropdown } from "./Dropdown";
 export type { DropdownProps, DropdownItem } from "./Dropdown";
 
-export { DatePicker, formatIsoDate, parseIsoDate } from "./DatePicker";
+export { DatePicker, formatIsoDate, parseIsoDate, getDefaultPresets } from "./DatePicker";
 export type {
   DatePickerProps,
   DatePickerMode,
   DatePickerValue,
+  DatePickerPreset,
 } from "./DatePicker";
 
 export { Input } from "./Input";
