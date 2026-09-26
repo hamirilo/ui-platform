@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.4.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.3.0...application-ui-kit-vv7.4.0) (2026-09-26)
+
+
+### Features
+
+* **DatePicker:** add presets support for quick date and range selection ([#66](https://github.com/hamirilo/ui-platform/issues/66)) ([32deb5c](https://github.com/hamirilo/ui-platform/commit/32deb5cf023b009c265c69b03b4a0c077c44ba2d))
+
 ## [7.3.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.2.1...application-ui-kit-vv7.3.0) (2026-09-26)
 
 

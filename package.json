@@ -1,6 +1,6 @@
 {
   "name": "@hamirilo/application-ui-kit",
-  "version": "7.3.0",
+  "version": "7.4.0",
   "description": "Shared React application UI components, semantic design tokens, and Storybook specification",
   "type": "module",
   "sideEffects": [
