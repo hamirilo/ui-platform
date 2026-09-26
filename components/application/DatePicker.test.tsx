@@ -3,7 +3,9 @@ import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import {
   DatePicker,
+  formatIsoDate,
   formatValue,
+  parseIsoDate,
   parseMultipleString,
   parseRangeString,
   parseSingleDateString,
@@ -109,6 +111,33 @@ describe("DatePicker parsing functions", () => {
       const d4 = new Date(2026, 7, 4);
       expect(formatValue("multiple", [d1, d2, d3, d4])).toBe("4日選択（8/1, 8/2, 8/3 他1件）");
     });
+  });
+});
+
+describe("ISO 日付文字列との変換", () => {
+  it("parseIsoDate はローカル時刻の 0 時の Date を返す", () => {
+    const date = parseIsoDate("2026-09-23");
+    expect(date?.getFullYear()).toBe(2026);
+    expect(date?.getMonth()).toBe(8);
+    expect(date?.getDate()).toBe(23);
+    expect(date?.getHours()).toBe(0);
+  });
+
+  it("parseIsoDate は時刻付きでも日付部分だけを読む", () => {
+    expect(formatIsoDate(parseIsoDate("2026-09-23T23:30:00+09:00"))).toBe("2026-09-23");
+  });
+
+  it("parseIsoDate は空・不正な値を undefined にする", () => {
+    expect(parseIsoDate("")).toBeUndefined();
+    expect(parseIsoDate(undefined)).toBeUndefined();
+    expect(parseIsoDate(null)).toBeUndefined();
+    expect(parseIsoDate("2026/09/23")).toBeUndefined();
+  });
+
+  it("formatIsoDate はローカル時刻の年月日を 0 埋めで返し、未選択は空文字", () => {
+    expect(formatIsoDate(new Date(2026, 0, 5, 1, 30))).toBe("2026-01-05");
+    expect(formatIsoDate(undefined)).toBe("");
+    expect(formatIsoDate(null)).toBe("");
   });
 });
 

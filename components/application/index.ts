@@ -52,7 +52,7 @@ export type { ToastOptions, ToastType } from "./Toast";
 export { Dropdown } from "./Dropdown";
 export type { DropdownProps, DropdownItem } from "./Dropdown";
 
-export { DatePicker } from "./DatePicker";
+export { DatePicker, formatIsoDate, parseIsoDate } from "./DatePicker";
 export type {
   DatePickerProps,
   DatePickerMode,

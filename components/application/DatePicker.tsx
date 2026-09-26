@@ -105,6 +105,42 @@ export interface DatePickerProps {
 }
 
 /**
+ * ISO 形式の日付文字列（`YYYY-MM-DD`）を Date にする（ローカル時刻の 0 時）。
+ *
+ * DatePicker の値は Date だが、API のレスポンスやフォームの state、hidden input は
+ * 日付を文字列で持つことが多い。その間の変換に使う。末尾に時刻が付いていても日付部分だけを読む。
+ * 空・不正な値は undefined（DatePicker の「未選択」）。
+ *
+ * ```tsx
+ * <DatePicker
+ *   value={parseIsoDate(startedOn)}
+ *   onChange={(next) => setStartedOn(formatIsoDate(next as Date | undefined))}
+ * />
+ * ```
+ */
+export function parseIsoDate(value?: string | null): Date | undefined {
+  if (!value) return undefined;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (!match) return undefined;
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
+/**
+ * Date を ISO 形式の日付文字列（`YYYY-MM-DD`）にする。未選択（undefined）は空文字。
+ *
+ * `toISOString()` は UTC に直すため、日本時間の 0〜9 時台は前日の日付になる。
+ * こちらはローカル時刻の年月日をそのまま使う。
+ */
+export function formatIsoDate(date?: Date | null): string {
+  if (!date) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * 単一日付文字列をパースする
  * 対応形式:
  * - 2026-08-23, 2026/08/23, 2026.08.23, 2026-8-3

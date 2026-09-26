@@ -27,7 +27,7 @@
 | 一覧の件数と表示件数 | Pagination の `totalCount` / `pageSizeOptions` |
 | 削除などの確認（テンプレート側） | base.html の `confirm-host` 1 つ。`hx-confirm` と `confirm-modal` イベントを受ける。ボタンごとの宣言的な指定は `confirm-dialog` |
 | 状態表示 | Badge / ActiveIndicator |
-| 日付入力 | DatePicker |
+| 日付入力 | DatePicker。値を `YYYY-MM-DD` の文字列で持つ画面は `parseIsoDate` / `formatIsoDate` で変換する（`toISOString()` は UTC になり日付がずれる）。`<input type="date">` は iOS Safari で幅が効かず、はみ出す |
 | ページ送り | Pagination |
 | サイドバー等のナビゲーション項目 | NavItem。同じページ内で active を切り替えて背景の移動を見せるときだけ AnimatedNavItem（framer-motion をバンドルに含む。フルリロードの画面では動きが見えない） |
 | 値のコピー | CopyButton（テンプレートなら Islands の copy-field）。ワンタイム URL 等は値が見える入力欄と組にする |
