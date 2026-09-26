@@ -95,6 +95,11 @@ export interface DatePickerIslandProps {
    * 選択可能な最大日付（ISO 形式）
    */
   maxDate?: string;
+
+  /**
+   * プリセットボタンの表示
+   */
+  presets?: boolean;
 }
 
 function useHiddenInputSync(targetId: string | undefined, isoValue: string) {
@@ -116,6 +121,7 @@ export function DatePickerIsland({
   placeholder,
   minDate,
   maxDate,
+  presets,
 }: DatePickerIslandProps) {
   const [singleDate, setSingleDate] = useState<Date | undefined>(() => parseIsoDate(value));
   const [range, setRange] = useState<DateRange | undefined>(() => {
@@ -141,6 +147,7 @@ export function DatePickerIsland({
         placeholder={placeholder}
         minDate={parseIsoDate(minDate)}
         maxDate={parseIsoDate(maxDate)}
+        presets={presets}
       />
     );
   }
@@ -153,6 +160,7 @@ export function DatePickerIsland({
       placeholder={placeholder}
       minDate={parseIsoDate(minDate)}
       maxDate={parseIsoDate(maxDate)}
+      presets={presets}
     />
   );
 }

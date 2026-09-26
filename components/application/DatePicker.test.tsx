@@ -5,6 +5,9 @@ import {
   DatePicker,
   formatIsoDate,
   formatValue,
+  getDefaultPresets,
+  isPresetActive,
+  isPresetDisabled,
   parseIsoDate,
   parseMultipleString,
   parseRangeString,
@@ -194,5 +197,148 @@ describe("DatePicker Component", () => {
     render(<DatePicker error placeholder="日付を選択" />);
     const input = screen.getByPlaceholderText("日付を選択");
     expect(input.getAttribute("aria-invalid")).toBe("true");
+  });
+
+  describe("presets 機能", () => {
+    const fixedToday = new Date(2026, 7, 23); // 2026-08-23（日）
+
+    it("single モードのデフォルトプリセットが正しく生成される", () => {
+      const presets = getDefaultPresets("single", fixedToday);
+      const labels = presets.map((p) => p.label);
+      expect(labels).toEqual(["今日", "明日", "昨日"]);
+
+      const todayVal =
+        typeof presets[0].value === "function" ? presets[0].value() : presets[0].value;
+      const tomorrowVal =
+        typeof presets[1].value === "function" ? presets[1].value() : presets[1].value;
+      const yesterdayVal =
+        typeof presets[2].value === "function" ? presets[2].value() : presets[2].value;
+
+      expect((todayVal as Date).getDate()).toBe(23);
+      expect((tomorrowVal as Date).getDate()).toBe(24);
+      expect((yesterdayVal as Date).getDate()).toBe(22);
+    });
+
+    it("range モードのデフォルトプリセットが正しく生成される", () => {
+      const presets = getDefaultPresets("range", fixedToday);
+      const labels = presets.map((p) => p.label);
+      expect(labels).toEqual(["今日", "今週", "今月", "先月", "過去7日間", "過去30日間"]);
+
+      const thisMonth =
+        typeof presets[2].value === "function" ? presets[2].value() : presets[2].value;
+      expect((thisMonth as any).from.getDate()).toBe(1);
+      expect((thisMonth as any).from.getMonth()).toBe(7);
+      expect((thisMonth as any).to.getDate()).toBe(31);
+      expect((thisMonth as any).to.getMonth()).toBe(7);
+
+      const lastMonth =
+        typeof presets[3].value === "function" ? presets[3].value() : presets[3].value;
+      expect((lastMonth as any).from.getDate()).toBe(1);
+      expect((lastMonth as any).from.getMonth()).toBe(6);
+      expect((lastMonth as any).to.getDate()).toBe(31);
+      expect((lastMonth as any).to.getMonth()).toBe(6);
+    });
+
+    it("isPresetDisabled が minDate/maxDate を判定する", () => {
+      const minDate = new Date(2026, 7, 10);
+      const maxDate = new Date(2026, 7, 25);
+
+      expect(isPresetDisabled(new Date(2026, 7, 20), minDate, maxDate)).toBe(false);
+      expect(isPresetDisabled(new Date(2026, 7, 5), minDate, maxDate)).toBe(true);
+      expect(isPresetDisabled(new Date(2026, 7, 26), minDate, maxDate)).toBe(true);
+
+      expect(
+        isPresetDisabled(
+          { from: new Date(2026, 7, 10), to: new Date(2026, 7, 20) },
+          minDate,
+          maxDate,
+        ),
+      ).toBe(false);
+      expect(
+        isPresetDisabled(
+          { from: new Date(2026, 7, 1), to: new Date(2026, 7, 20) },
+          minDate,
+          maxDate,
+        ),
+      ).toBe(true);
+    });
+
+    it("isPresetActive が選択中の値と一致するか判定する", () => {
+      const d1 = new Date(2026, 7, 23);
+      const d2 = new Date(2026, 7, 23, 10, 0); // 時間が異なっても同日なら active
+      expect(isPresetActive(d1, d2, "single")).toBe(true);
+
+      const r1 = { from: new Date(2026, 7, 1), to: new Date(2026, 7, 31) };
+      const r2 = { from: new Date(2026, 7, 1), to: new Date(2026, 7, 31) };
+      expect(isPresetActive(r1, r2, "range")).toBe(true);
+
+      const r3 = { from: new Date(2026, 7, 1), to: new Date(2026, 7, 30) };
+      expect(isPresetActive(r1, r3, "range")).toBe(false);
+    });
+
+    it("presets={true} でカレンダーを開いたときにプリセットが表示され、クリックで値が反映される", async () => {
+      const onChange = vi.fn();
+      render(<DatePicker mode="single" presets onChange={onChange} placeholder="日付を選択" />);
+
+      // カレンダーボタンをクリックして Popover を開く
+      const triggerBtn = screen.getByRole("button", { name: "カレンダーを開く" });
+      fireEvent.click(triggerBtn);
+
+      // プリセットボタン「今日」が表示される
+      const todayPresetBtn = await screen.findByRole("button", { name: "今日" });
+      expect(todayPresetBtn).toBeDefined();
+
+      // クリックすると onChange が呼ばれる
+      fireEvent.click(todayPresetBtn);
+      expect(onChange).toHaveBeenCalledTimes(1);
+
+      const calledDate = onChange.mock.calls[0][0] as Date;
+      const today = new Date();
+      expect(calledDate.getFullYear()).toBe(today.getFullYear());
+      expect(calledDate.getMonth()).toBe(today.getMonth());
+      expect(calledDate.getDate()).toBe(today.getDate());
+    });
+
+    it("range モードで presets={true} のとき「今月」をクリックすると月の範囲が反映される", async () => {
+      const onChange = vi.fn();
+      render(<DatePicker mode="range" presets onChange={onChange} placeholder="期間を選択" />);
+
+      const triggerBtn = screen.getByRole("button", { name: "カレンダーを開く" });
+      fireEvent.click(triggerBtn);
+
+      const monthPresetBtn = await screen.findByRole("button", { name: "今月" });
+      fireEvent.click(monthPresetBtn);
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      const range = onChange.mock.calls[0][0];
+      const today = new Date();
+      expect(range.from.getFullYear()).toBe(today.getFullYear());
+      expect(range.from.getMonth()).toBe(today.getMonth());
+      expect(range.from.getDate()).toBe(1);
+    });
+
+    it("カスタムプリセットを渡せる", async () => {
+      const onChange = vi.fn();
+      const customDate = new Date(2026, 11, 25);
+      render(
+        <DatePicker
+          mode="single"
+          presets={[{ label: "クリスマス", value: customDate }]}
+          onChange={onChange}
+          placeholder="日付を選択"
+        />,
+      );
+
+      const triggerBtn = screen.getByRole("button", { name: "カレンダーを開く" });
+      fireEvent.click(triggerBtn);
+
+      const customPresetBtn = await screen.findByRole("button", { name: "クリスマス" });
+      fireEvent.click(customPresetBtn);
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      const calledDate = onChange.mock.calls[0][0] as Date;
+      expect(calledDate.getMonth()).toBe(11);
+      expect(calledDate.getDate()).toBe(25);
+    });
   });
 });
