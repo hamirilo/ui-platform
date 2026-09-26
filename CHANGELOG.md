@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.4.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.4.0...application-ui-kit-vv7.4.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* **ButtonGroup:** keep pressed-primary toggle readable on hover ([#68](https://github.com/hamirilo/ui-platform/issues/68)) ([f9f7b8e](https://github.com/hamirilo/ui-platform/commit/f9f7b8ea371794c70535f419e6acaa037adbd8b0))
+
 ## [7.4.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.3.0...application-ui-kit-vv7.4.0) (2026-09-26)
 
 
