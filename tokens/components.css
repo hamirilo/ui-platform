@@ -2229,3 +2229,24 @@
    * cn-field-orientation-* は .tsx 側にインラインで実体があるマーカークラス。
    * 上流も CSS 定義を持たないため、ここでも定義しない。 */
 }
+
+/* fix: ButtonGroup（Toggle）primary バリアント — pressed 状態のアイテムに
+ * ホバーすると、上の [data-pressed]:hover / [aria-pressed=true]:hover
+ * （@layer components、より高い詳細度）よりも、components/ui/toggle.tsx の
+ * 基底クラスにある hover:bg-muted（Tailwind v4 が自動的に @layer utilities
+ * へ出力する）が、詳細度に関係なくレイヤー順で勝ってしまい、
+ * 「白文字はそのまま・背景だけ薄いグレーになる」ため読めなくなる。
+ * @layer の外（レイヤー無所属）に置くことで、レイヤー順に関係なく
+ * 常にこちらを勝たせる。値は上の data-pressed:hover:bg-primary/90 が
+ * コンパイルされた結果と同じ（#3080ffe6 / color-mix 90%）。 */
+.cn-toggle-variant-primary[aria-pressed="true"]:hover,
+.cn-toggle-variant-primary[data-pressed]:hover {
+  background-color: #3080ffe6;
+  color: var(--color-primary-foreground);
+}
+@supports (color: color-mix(in lab, red, red)) {
+  .cn-toggle-variant-primary[aria-pressed="true"]:hover,
+  .cn-toggle-variant-primary[data-pressed]:hover {
+    background-color: color-mix(in oklab, var(--color-primary) 90%, transparent);
+  }
+}
