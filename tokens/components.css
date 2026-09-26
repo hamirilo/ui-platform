@@ -2239,13 +2239,13 @@
  * @layer の外（レイヤー無所属）に置くことで、レイヤー順に関係なく
  * 常にこちらを勝たせる。値は上の data-pressed:hover:bg-primary/90 が
  * コンパイルされた結果と同じ（#3080ffe6 / color-mix 90%）。 */
-.cn-toggle-variant-primary[aria-pressed=true]:hover,
+.cn-toggle-variant-primary[aria-pressed="true"]:hover,
 .cn-toggle-variant-primary[data-pressed]:hover {
   background-color: #3080ffe6;
   color: var(--color-primary-foreground);
 }
 @supports (color: color-mix(in lab, red, red)) {
-  .cn-toggle-variant-primary[aria-pressed=true]:hover,
+  .cn-toggle-variant-primary[aria-pressed="true"]:hover,
   .cn-toggle-variant-primary[data-pressed]:hover {
     background-color: color-mix(in oklab, var(--color-primary) 90%, transparent);
   }
