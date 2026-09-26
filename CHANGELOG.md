@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.3.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.2.1...application-ui-kit-vv7.3.0) (2026-09-26)
+
+
+### Features
+
+* export ISO date helpers and fit filter-bar fields on narrow screens ([#65](https://github.com/hamirilo/ui-platform/issues/65)) ([f8613fe](https://github.com/hamirilo/ui-platform/commit/f8613fed5da86689ff87c01aac9eb9dbf9eef4bf))
+
+
+### Bug Fixes
+
+* **ci:** stop biome from rejecting files release-please rewrites ([#63](https://github.com/hamirilo/ui-platform/issues/63)) ([82f3796](https://github.com/hamirilo/ui-platform/commit/82f379696be310c40aa66a419b8298c39ea53c4d))
+
 ## [7.2.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.2.0...application-ui-kit-vv7.2.1) (2026-09-25)
 
 
