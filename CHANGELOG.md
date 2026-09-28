@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.5.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.4.2...application-ui-kit-v7.5.0) (2026-09-28)
+
+
+### Features
+
+* **components:** add ProductSwitcher for moving between sibling products ([#75](https://github.com/hamirilo/ui-platform/issues/75)) ([0af689d](https://github.com/hamirilo/ui-platform/commit/0af689d50f66c8eda29436954217e52ce321767a))
+
 ## [7.4.2](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.4.1...application-ui-kit-v7.4.2) (2026-09-28)
 
 
