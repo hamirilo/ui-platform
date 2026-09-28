@@ -5,7 +5,6 @@
 
 ### ⚠ BREAKING CHANGES
 
-* 
 * コントロールの高さを 24/28/32/40px に揃える
 * shadcn/ui gen3 (Base UI) へ移行し、公開APIを整理する
 
@@ -13,16 +12,6 @@
 
 * add single choice pattern catalog ([fda2a6a](https://github.com/hamirilo/ui-platform/commit/fda2a6ab21ddcfc4f3da78f0206f3313f218955f))
 * ApplicationActiveIndicator を公開APIに追加する ([177f93a](https://github.com/hamirilo/ui-platform/commit/177f93a1f00e9fc9a52e461df8c1f6026574e9f2))
-* **components:** add copy field island ([4a0b676](https://github.com/hamirilo/ui-platform/commit/4a0b6760ba818f74b718580c13c430309b3f2497))
-* **components:** add copy field island ([18feb8d](https://github.com/hamirilo/ui-platform/commit/18feb8d80d413c0bd0e35e85e1567d20b948d540))
-* **components:** add copy field island ([5913d44](https://github.com/hamirilo/ui-platform/commit/5913d44075c8b8d468e6d6735912aed631891e2f))
-* **components:** add copy field island ([a57f878](https://github.com/hamirilo/ui-platform/commit/a57f87896c315fe52cb547a3ac749dc6f8f6fbf2))
-* **components:** add copy field island ([20bbd78](https://github.com/hamirilo/ui-platform/commit/20bbd78dc6196e0e488da4d7ab42cb877af0e0ef))
-* **components:** add copy field island ([81ef094](https://github.com/hamirilo/ui-platform/commit/81ef0940535d1f82c8f336e60ee9059849dc8dc3))
-* **components:** add copy field island ([ede2e17](https://github.com/hamirilo/ui-platform/commit/ede2e173844dc2d240f29d8a3bca04942c1b73ef))
-* **components:** add copy field island ([c9dcd67](https://github.com/hamirilo/ui-platform/commit/c9dcd67c150a5ea070d76b7b774d1cc8fdd520e2))
-* **components:** add copy field island ([02b6bab](https://github.com/hamirilo/ui-platform/commit/02b6bab6d6fbec5d156ce7b69457e6899b8f450b))
-* **components:** add copy field island ([b977852](https://github.com/hamirilo/ui-platform/commit/b977852386af20f42e30f0c4fd8c39f0a67bc081))
 * **components:** add copy field island ([759bd61](https://github.com/hamirilo/ui-platform/commit/759bd61c01ded3182104f1306639cd4e5005864e))
 * **DatePicker:** add presets support for quick date and range selection ([#66](https://github.com/hamirilo/ui-platform/issues/66)) ([32deb5c](https://github.com/hamirilo/ui-platform/commit/32deb5cf023b009c265c69b03b4a0c077c44ba2d))
 * enhance ApplicationButtonGroup and ApplicationDropdown components; add ApplicationThemeToggle tests and update theme styles ([5a20f73](https://github.com/hamirilo/ui-platform/commit/5a20f73c70b702202bbd1acb7dca19f7a530c69c))
@@ -43,10 +32,6 @@
 * add accessible labels to single choice catalog ([ef346b3](https://github.com/hamirilo/ui-platform/commit/ef346b3a9e466b6df0d75d219668de270a2abe9e))
 * adjust calendar cell sizing and update day button class selector ([3c5e739](https://github.com/hamirilo/ui-platform/commit/3c5e7394a5b14b40cb7abe5341514967b5e4499a))
 * adjust width handling in Combobox and Select components to prevent overflow issues ([884e9fb](https://github.com/hamirilo/ui-platform/commit/884e9fba5fa48cdb888646f23e4357e006cf6a2e))
-* align card and input sizing ([37fb713](https://github.com/hamirilo/ui-platform/commit/37fb713f8fa3f7f00fe99464ea448b22aa67799d))
-* align card and input sizing ([e9bb2e4](https://github.com/hamirilo/ui-platform/commit/e9bb2e4994ae193208a751f9faa4bce6beae4975))
-* align card and input sizing ([6d76fb7](https://github.com/hamirilo/ui-platform/commit/6d76fb7697ce0f1d454c3b03be20ba21c81182d4))
-* align card and input sizing ([4243207](https://github.com/hamirilo/ui-platform/commit/42432074eca8bdbf81696cda4b7eaad11e1242af))
 * align card and input sizing ([65306d3](https://github.com/hamirilo/ui-platform/commit/65306d3781b5fffd851f6ee837ca480fa850fbcb))
 * **ButtonGroup:** keep pressed-primary toggle readable on hover ([#68](https://github.com/hamirilo/ui-platform/issues/68)) ([f9f7b8e](https://github.com/hamirilo/ui-platform/commit/f9f7b8ea371794c70535f419e6acaa037adbd8b0))
 * **ci:** actions を node24 の最新 major へ上げる ([#46](https://github.com/hamirilo/ui-platform/issues/46)) ([6ae4550](https://github.com/hamirilo/ui-platform/commit/6ae45501f546996d35c6cc9eddc3ae7c0de110d2))
@@ -73,21 +58,21 @@
 * update ApplicationDatePicker display format from Japanese date to yyyy-MM-dd ([bd9650d](https://github.com/hamirilo/ui-platform/commit/bd9650df70901130809e8a604b02a0551350a8e3))
 * 和文の縦位置を Inter のメトリクスオーバーライドで補正する ([011a8ad](https://github.com/hamirilo/ui-platform/commit/011a8ad0bb0ee15bee1963ee81a12f8bbf28e14a))
 
-## [7.4.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.4.0...application-ui-kit-vv7.4.1) (2026-09-26)
+## [7.4.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.4.0...application-ui-kit-v7.4.1) (2026-09-26)
 
 
 ### Bug Fixes
 
 * **ButtonGroup:** keep pressed-primary toggle readable on hover ([#68](https://github.com/hamirilo/ui-platform/issues/68)) ([f9f7b8e](https://github.com/hamirilo/ui-platform/commit/f9f7b8ea371794c70535f419e6acaa037adbd8b0))
 
-## [7.4.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.3.0...application-ui-kit-vv7.4.0) (2026-09-26)
+## [7.4.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.3.0...application-ui-kit-v7.4.0) (2026-09-26)
 
 
 ### Features
 
 * **DatePicker:** add presets support for quick date and range selection ([#66](https://github.com/hamirilo/ui-platform/issues/66)) ([32deb5c](https://github.com/hamirilo/ui-platform/commit/32deb5cf023b009c265c69b03b4a0c077c44ba2d))
 
-## [7.3.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.2.1...application-ui-kit-vv7.3.0) (2026-09-26)
+## [7.3.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.2.1...application-ui-kit-v7.3.0) (2026-09-26)
 
 
 ### Features
@@ -99,7 +84,7 @@
 
 * **ci:** stop biome from rejecting files release-please rewrites ([#63](https://github.com/hamirilo/ui-platform/issues/63)) ([82f3796](https://github.com/hamirilo/ui-platform/commit/82f379696be310c40aa66a419b8298c39ea53c4d))
 
-## [7.2.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.2.0...application-ui-kit-vv7.2.1) (2026-09-25)
+## [7.2.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.2.0...application-ui-kit-v7.2.1) (2026-09-25)
 
 
 ### Bug Fixes
