@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.4.2](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.4.1...application-ui-kit-v7.4.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* **components:** 候補を出す入力欄でブラウザの入力履歴を出さない ([#70](https://github.com/hamirilo/ui-platform/issues/70)) ([1670d31](https://github.com/hamirilo/ui-platform/commit/1670d311906dacd89ef2f0245ca0c8375edf684d))
+* **release:** stop Release Please from emitting double-v tags ([#71](https://github.com/hamirilo/ui-platform/issues/71)) ([df5b835](https://github.com/hamirilo/ui-platform/commit/df5b83592861a3cadd6c29eb69502171a2d53024))
+
 ## [7.4.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-vv7.4.0...application-ui-kit-vv7.4.1) (2026-09-26)
 
 
