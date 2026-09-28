@@ -666,6 +666,8 @@ export function DatePicker({
         <InputGroupInput
           id={id}
           type="text"
+          // ブラウザの入力履歴がカレンダーのポップオーバーに重なるため出さない
+          autoComplete="off"
           disabled={disabled}
           placeholder={placeholder}
           value={inputValue}

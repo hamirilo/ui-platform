@@ -145,6 +145,11 @@ describe("ISO 日付文字列との変換", () => {
 });
 
 describe("DatePicker Component", () => {
+  it("ブラウザの入力履歴を出さない（カレンダーに重なるため）", () => {
+    render(<DatePicker mode="single" onChange={vi.fn()} placeholder="日付を選択" />);
+    expect(screen.getByPlaceholderText("日付を選択").getAttribute("autocomplete")).toBe("off");
+  });
+
   it("キーボードで直接日付を入力して Enter を押すと onChange が呼ばれフォーマットされる", async () => {
     const onChange = vi.fn();
     render(<DatePicker mode="single" onChange={onChange} placeholder="日付を選択" />);

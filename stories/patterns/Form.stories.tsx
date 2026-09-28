@@ -75,7 +75,12 @@ const meta = {
 - 送信中は \`<fieldset disabled>\` で囲む。ボタンを無効化するだけでは
   入力が編集され続けてしまう
 - \`autoComplete\` を適切に設定する（\`name\` / \`email\` / \`tel\` 等）。
-  補完が効かないフォームは入力ミスが増える
+  補完が効かないフォームは入力ミスが増える。
+  ただし**候補一覧やポップオーバーを自前で出す入力欄は \`autoComplete="off"\`**
+  （ブラウザの入力履歴が重なって選択肢が隠れる）。\`Combobox\` / \`ScopeSearch\` /
+  \`DatePicker\` / \`SearchInput\` は既定で off にしてある。\`Input\` で自作する場合は自分で付ける。
+  Chrome は \`name\` / \`id\` が氏名・住所らしいと off を無視して住所の自動入力を出すので、
+  表示用の入力欄には \`name\` を付けず、送信値は隠した input に持たせる
 - **電話番号・郵便番号・社員番号に \`type="number"\` を使わない。**
   \`type="text"\` + \`inputMode="numeric"\` を使う（先頭 0 が消える／スピナーが出る）
         `,

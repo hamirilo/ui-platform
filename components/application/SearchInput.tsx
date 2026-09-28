@@ -58,6 +58,9 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
         <InputGroupInput
           ref={ref}
           type="search"
+          // 検索欄の下には絞り込み結果や候補を並べることが多く、ブラウザの入力履歴が
+          // それに重なる。履歴を使いたい場合は利用側で autoComplete="on" を渡す
+          autoComplete="off"
           value={value}
           // ブラウザ標準の × は位置もサイズも揃わないため隠し、クリアボタンに一本化する
           className={cn("[&::-webkit-search-cancel-button]:hidden")}
