@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.5.2](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.5.1...application-ui-kit-v7.5.2) (2026-10-06)
+
+
+### Performance Improvements
+
+* **components:** DatePicker が date-fns の全ロケールを読まないようにし、islands テストの時間切れを解消 ([#79](https://github.com/hamirilo/ui-platform/issues/79)) ([bf1c129](https://github.com/hamirilo/ui-platform/commit/bf1c129fdac6b02728060bfbbdc1c58cbd4c0df3))
+
 ## [7.5.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.5.0...application-ui-kit-v7.5.1) (2026-10-06)
 
 
