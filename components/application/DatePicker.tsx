@@ -21,7 +21,7 @@ import {
   subDays,
   subMonths,
 } from "date-fns";
-import { ja } from "date-fns/locale";
+import { ja } from "date-fns/locale/ja";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
