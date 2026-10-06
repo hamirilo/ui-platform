@@ -1,5 +1,11 @@
 import { act } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+/* キット標準の Island が依存する外部パッケージ（react-day-picker と、それが読む date-fns 全体など）は
+ * 初回の読み込みが重い。テスト本体の import() で初めて読むとその時間がテストのタイムアウトに数えられ、
+ * 並列実行中に 5 秒を超えることがあった。ここで静的に import して収集時に読み込んでおく。
+ * vi.resetModules() が読み直すのはソースのモジュールだけで、node_modules の外部パッケージは
+ * キャッシュされたままなので、各テストは自前のモジュールの評価だけを待てばよい。 */
+import "./index";
 
 /* レジストリと自動マウントの開始フラグはモジュール単位の状態なので、
  * テストごとにモジュールを読み直して前のテストの登録を持ち越さない。 */
