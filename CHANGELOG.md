@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.7.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.6.0...application-ui-kit-v7.7.0) (2026-10-06)
+
+
+### Features
+
+* **Dialog:** add 4xl and 6xl max widths for wide tables and previews ([#86](https://github.com/hamirilo/ui-platform/issues/86)) ([00b4869](https://github.com/hamirilo/ui-platform/commit/00b4869d44aabf70ff117c29e4a38eea99f7aec2))
+
 ## [7.6.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.5.2...application-ui-kit-v7.6.0) (2026-10-06)
 
 
