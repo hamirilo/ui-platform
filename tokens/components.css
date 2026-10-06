@@ -1880,6 +1880,13 @@
     border-color: var(--color-border);
     background-color: var(--color-card);
   }
+  /* 枠のどこを押しても選択が開くので、押せることを指と枠色で伝える */
+  .cn-file-drop-zone:not([data-disabled]) .cn-file-drop-zone-area {
+    cursor: pointer;
+  }
+  .cn-file-drop-zone:not([data-disabled], [aria-invalid="true"]) .cn-file-drop-zone-area:hover {
+    border-color: color-mix(in oklab, var(--color-primary) 50%, var(--color-border));
+  }
   .cn-file-drop-zone[data-dragging] .cn-file-drop-zone-area {
     border-color: var(--color-primary);
     background-color: color-mix(in oklab, var(--color-primary) 6%, var(--color-card));
