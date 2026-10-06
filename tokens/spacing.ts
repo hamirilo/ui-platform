@@ -6,7 +6,7 @@
  *
  * <important>
  * 任意値（`p-[13px]` / `w-[300px]`）は禁止。必ずスケール上の値を使う。
- * 出典: design-system/spacing-and-layout.md
+ * 見本: Storybook「基礎/余白」（stories/foundations/Spacing.mdx）
  * </important>
  */
 
@@ -28,7 +28,7 @@ export const SPACING_SCALE = [
  * 標準化されたスペーシングの決まり
  *
  * 混在を防ぐため、以下は値を1つに固定する。
- * 出典: design-system/components.md
+ * このファイルが正。Storybook「基礎/余白」が表示する。
  */
 export const SPACING_RULES = [
   { context: "ラベルと入力欄の間", value: "mb-1.5", note: "mb-1 / mb-2 との混在を禁止" },
