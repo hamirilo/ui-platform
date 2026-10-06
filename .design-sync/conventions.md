@@ -3,6 +3,7 @@
 **No provider/root wrapper is required.** Components render fully styled as soon as the bundle and `styles.css` are loaded — there is no `ThemeProvider`/`ConfigProvider` export in this package. Two setup details still matter:
 
 - **Dark mode** is a plain class toggle, not a provider: add/remove `.dark` on the root element (e.g. `<html>`) and every semantic color token flips automatically. `ThemeToggle` already does this internally — reuse it rather than re-implementing the toggle.
+- **`NavItem` pulls in `framer-motion`.** It and `ActiveIndicator` are the only components that do, and they add ~40KB gzip to a consumer bundle (components that don't use it cost nothing). Don't reach for framer-motion when composing new UI.
 - **Toasts need a mount point.** `toast` is the function that fires a toast; `Toaster` is a separate export that must be rendered once, near the app root (it's the portal the toasts render into). Without it, `toast(...)` calls do nothing visible.
 
 ### Styling idiom: Tailwind v4 + semantic color tokens

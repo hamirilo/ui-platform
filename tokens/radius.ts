@@ -1,8 +1,8 @@
 /**
  * Border radius / Shadow / Animation トークン
  *
- * radius の SSOT: tokens/theme.css の `--radius`（0.5rem）
- * 出典: design-system/spacing-and-layout.md
+ * radius の SSOT: tokens/tokens.css の `--radius`（0.5rem、`tokens/theme.css` は入口）
+ * 見本: Storybook「基礎/角丸と影」（stories/foundations/RadiusAndShadow.mdx）
  */
 
 /**
@@ -28,7 +28,7 @@ export const RADIUS_SCALE = [
  * <important>
  * `shadow-sm` のみを使う。`shadow-md` 以上は使わない。
  * 例外: ドロップダウン・ポップオーバーの浮遊要素のみ `shadow-lg` を許可。
- * 出典: design-system/components.md「シャドウは shadow-sm のみ」
+ * 出典: design-system/README.md §1「避ける表現」（強い Shadow）
  * </important>
  */
 export const SHADOW_SCALE = [
@@ -57,7 +57,7 @@ export const TRANSITIONS = [
  *
  * `prefers-reduced-motion` を尊重する。
  * 装飾的なアニメーション（pulse 等）は必ず無効化できるようにする。
- * 出典: design-system/accessibility.md
+ * 出典: design-system/README.md §5「基本操作性」（reduced motion 等の利用者設定を無視しない）
  */
 export const REDUCED_MOTION_NOTE =
   "装飾アニメーションは @media (prefers-reduced-motion: reduce) で無効化する";

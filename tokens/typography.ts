@@ -1,8 +1,9 @@
 /**
  * タイポグラフィトークン
  *
- * 出典: design-system/typography.md
- * フォント定義の SSOT: tokens/theme.css の `--font-sans`
+ * このファイルが「どの class をどう使うか」の正。値そのものは Tailwind の既定スケール。
+ * フォント定義の SSOT: tokens/tokens.css の `--font-sans`（`tokens/theme.css` は入口）
+ * 見本: Storybook「基礎/文字」（stories/foundations/Typography.mdx）
  */
 
 /** 見出しレベル */
@@ -51,7 +52,7 @@ export const FONT_WEIGHTS = [
 
 /**
  * アクセシビリティ最小サイズ
- * 出典: design-system/typography.md
+ * このファイルが正。Storybook「基礎/文字」が表示する。
  */
 export const MIN_SIZES = {
   body: "16px",

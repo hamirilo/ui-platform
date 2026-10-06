@@ -1,7 +1,7 @@
 /* ==========================================================================
  * 本文・UI 用フォントの自己ホスト定義（Inter / IBM Plex Sans JP）
  *
- * design-system/typography.md の標準構成に対応する @font-face 定義。
+ * tokens/typography.ts の標準構成に対応する @font-face 定義。
  * `--font-sans` (theme.css) が参照する。CDN 依存を避けるため
  * woff2 を ./fonts/ に同梱している（社内ネットワーク制限・オフライン環境でも動作）。
  *
