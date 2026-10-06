@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.6.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.5.2...application-ui-kit-v7.6.0) (2026-10-06)
+
+
+### Features
+
+* **Tabs:** variant と orientation を primitive から透過させる ([#82](https://github.com/hamirilo/ui-platform/issues/82)) ([cd85224](https://github.com/hamirilo/ui-platform/commit/cd852248a64476af677913c4489088badfdbe2a5))
+
+
+### Bug Fixes
+
+* **tokens:** 色の正を tokens.css へ一本化し、DESIGN.md の colors を生成物にする ([#83](https://github.com/hamirilo/ui-platform/issues/83)) ([cab0965](https://github.com/hamirilo/ui-platform/commit/cab0965fef201a920d09ba377aec6a0df2d47d2f))
+
 ## [7.5.2](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.5.1...application-ui-kit-v7.5.2) (2026-10-06)
 
 
