@@ -151,14 +151,9 @@ export interface FormDialogProps {
  *   loading={isSubmitting}
  * >
  *   <div className="space-y-4">
- *     <div>
- *       <label htmlFor="name">名前</label>
- *       <input
- *         {...register("name", { required: true })}
- *         className="w-full px-3 py-2 border rounded-lg"
- *       />
- *       {errors.name && <span className="text-red-600 text-sm">必須項目です</span>}
- *     </div>
+ *     <FormField label="名前" required error={errors.name && "必須項目です"}>
+ *       <Input {...register("name", { required: true })} />
+ *     </FormField>
  *   </div>
  * </FormDialog>
  * ```

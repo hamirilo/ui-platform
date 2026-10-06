@@ -1,3 +1,16 @@
+/**
+ * NavItem - サイドバー / ナビゲーションの 1 項目
+ *
+ * `href` があれば `<a>`、無ければ `<button>` を描く。選択中は ActiveIndicator が
+ * 項目の間を移動する。
+ *
+ * <important>
+ * **ActiveIndicator 経由で `framer-motion` に依存する。**
+ * この部品を使うと利用側の bundle が gzip で約 40KB 増える（使わなければ 0）。
+ * 詳細は ActiveIndicator.tsx の冒頭と README.md「framer-motion について」を参照。
+ * </important>
+ */
+
 "use client";
 
 import * as React from "react";
@@ -30,6 +43,14 @@ export type NavItemButtonProps = NavItemBaseProps &
 
 export type NavItemProps = NavItemLinkProps | NavItemButtonProps;
 
+/**
+ * activeColor ごとの見た目。
+ *
+ * 色は Semantic Token（`--color-nav-*` / `--color-primary`）だけを引く。
+ * raw palette（`text-blue-600` 等）と `dark:` の出し分けを書かないこと。
+ * ダークで 1 段明るくするのは Token 側（tokens/tokens.css の `.dark`）の仕事で、
+ * ここは 7 色とも同じ式（文字 = 色、面 = /10、枠と件数バッジ = /20）で書く。
+ */
 const colorStyles: Record<NavItemColor, { text: string; indicator: string; badge: string }> = {
   primary: {
     text: "text-primary font-semibold",
@@ -37,34 +58,34 @@ const colorStyles: Record<NavItemColor, { text: string; indicator: string; badge
     badge: "bg-primary/20 text-primary",
   },
   blue: {
-    text: "text-blue-600 dark:text-blue-400 font-semibold",
-    indicator: "bg-blue-600/10 dark:bg-blue-600/20 border-blue-500/20",
-    badge: "bg-blue-600/20 text-blue-600 dark:text-blue-400",
+    text: "text-nav-blue font-semibold",
+    indicator: "bg-nav-blue/10 border-nav-blue/20",
+    badge: "bg-nav-blue/20 text-nav-blue",
   },
   indigo: {
-    text: "text-indigo-600 dark:text-indigo-400 font-semibold",
-    indicator: "bg-indigo-600/10 dark:bg-indigo-600/20 border-indigo-500/20",
-    badge: "bg-indigo-600/20 text-indigo-600 dark:text-indigo-400",
+    text: "text-nav-indigo font-semibold",
+    indicator: "bg-nav-indigo/10 border-nav-indigo/20",
+    badge: "bg-nav-indigo/20 text-nav-indigo",
   },
   teal: {
-    text: "text-teal-600 dark:text-teal-400 font-semibold",
-    indicator: "bg-teal-600/10 dark:bg-teal-600/20 border-teal-500/20",
-    badge: "bg-teal-600/20 text-teal-600 dark:text-teal-400",
+    text: "text-nav-teal font-semibold",
+    indicator: "bg-nav-teal/10 border-nav-teal/20",
+    badge: "bg-nav-teal/20 text-nav-teal",
   },
   amber: {
-    text: "text-amber-600 dark:text-amber-400 font-semibold",
-    indicator: "bg-amber-600/10 dark:bg-amber-600/20 border-amber-500/20",
-    badge: "bg-amber-600/20 text-amber-600 dark:text-amber-400",
+    text: "text-nav-amber font-semibold",
+    indicator: "bg-nav-amber/10 border-nav-amber/20",
+    badge: "bg-nav-amber/20 text-nav-amber",
   },
   rose: {
-    text: "text-rose-600 dark:text-rose-400 font-semibold",
-    indicator: "bg-rose-600/10 dark:bg-rose-600/20 border-rose-500/20",
-    badge: "bg-rose-600/20 text-rose-600 dark:text-rose-400",
+    text: "text-nav-rose font-semibold",
+    indicator: "bg-nav-rose/10 border-nav-rose/20",
+    badge: "bg-nav-rose/20 text-nav-rose",
   },
   emerald: {
-    text: "text-emerald-600 dark:text-emerald-400 font-semibold",
-    indicator: "bg-emerald-600/10 dark:bg-emerald-600/20 border-emerald-500/20",
-    badge: "bg-emerald-600/20 text-emerald-600 dark:text-emerald-400",
+    text: "text-nav-emerald font-semibold",
+    indicator: "bg-nav-emerald/10 border-nav-emerald/20",
+    badge: "bg-nav-emerald/20 text-nav-emerald",
   },
 };
 

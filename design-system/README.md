@@ -57,6 +57,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | `accent` / `accent-foreground` | hover 等の弱い強調 |
 | `border` / `input` / `ring` | 枠線・入力枠・フォーカスリング |
 | `status-{new,active,done,warning,danger,pending,neutral}` (+ `-foreground`) | 業務状態（未対応・対応中・完了…）。Badge の tone とテンプレートの `.badge-{tone}` が引く |
+| `nav-{blue,indigo,teal,amber,rose,emerald}` | ナビゲーションの区画を見分けるための装飾色。NavItem の `activeColor` と 1:1（`primary` も選べる）。意味は持たせない |
 
 - 既存 Token で表現できる場合は新しい Token を増やさない
 - アプリごとのブランド差分は、利用側 CSS の `@theme` 上書きで表現する（部品は変更しない）
@@ -81,7 +82,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | toast | 補助的なフィードバック（`alert()` を使わない） |
 | Table | 一覧。空状態が必須の API |
 | RadioTable | 表から1行を選ばせる。プラン・送付先など列で比較して決める選択 |
-| Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション |
+| Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション。Tabs は `variant`（default / line）と `orientation`（horizontal / vertical）を持つ。NavItem は `framer-motion`（optional な peerDependency）を必要とする |
 | Badge / ActiveIndicator | 状態表示 |
 | Alert | 継続して伝える注意・案内（フォーム全体のエラー、未完了の設定、権限による制限）。ページ幅のお知らせは `variant="banner"` |
 | PageHeader / Breadcrumbs | 画面の見出し領域（見出し・説明・主操作・タブ）と現在位置 |
