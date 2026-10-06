@@ -85,9 +85,12 @@ export interface DialogProps {
 
   /**
    * ダイアログの最大幅
+   *
+   * 既定で足りるなら広げない。`4xl` は列の多い表、`6xl` は画像や文書ページの
+   * 拡大表示のように、広さそのものが中身になる場合に使う。
    * @default "lg" (32rem)
    */
-  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl";
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "6xl";
 }
 
 /**
@@ -159,6 +162,8 @@ export const Dialog = ({
     lg: "max-w-lg",
     xl: "max-w-xl",
     "2xl": "max-w-2xl",
+    "4xl": "max-w-4xl",
+    "6xl": "max-w-6xl",
   }[maxWidth];
 
   // デフォルトフッター（footer が指定されていない場合）

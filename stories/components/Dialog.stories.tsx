@@ -85,7 +85,7 @@ const meta = {
     cancelText: { control: "text" },
     confirmVariant: { control: "select", options: ["primary", "danger", "success"] },
     confirmLoading: { control: "boolean" },
-    maxWidth: { control: "select", options: ["sm", "md", "lg", "xl", "2xl"] },
+    maxWidth: { control: "select", options: ["sm", "md", "lg", "xl", "2xl", "4xl", "6xl"] },
     children: { table: { disable: true } },
     footer: { table: { disable: true } },
   },
@@ -418,11 +418,12 @@ export const CustomFooter: Story = {
   },
 };
 
-/** 最大幅の比較。内容量に合わせて選ぶ（既定は `lg`）。 */
+const WIDTHS = ["sm", "md", "lg", "xl", "2xl", "4xl", "6xl"] as const;
+
+/** 最大幅の比較。内容量に合わせて選ぶ（既定は `lg`）。`4xl` / `6xl` は表や画像の拡大表示向け。 */
 export const MaxWidths: Story = {
   render: (args) => {
-    const [width, setWidth] = React.useState<"sm" | "md" | "lg" | "xl" | "2xl" | null>(null);
-    const WIDTHS = ["sm", "md", "lg", "xl", "2xl"] as const;
+    const [width, setWidth] = React.useState<(typeof WIDTHS)[number] | null>(null);
 
     return (
       <>
