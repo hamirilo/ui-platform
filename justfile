@@ -5,8 +5,14 @@ check:
     bun run typecheck
     bun run test
     bun run lint
+    bun run check:design
     bun run build
     bun run build-storybook
+
+# DESIGN.md の colors を tokens/tokens.css から再生成する。
+# `just check` が差分を検出したらこれを実行する。
+sync-design:
+    bun run sync:design
 
 build:
     bun run build
