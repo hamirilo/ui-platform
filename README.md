@@ -101,6 +101,27 @@ GitHub Packagesへpublishされる実package名は `@<owner>/application-ui-kit`
 }
 ```
 
+### framer-motion について
+
+`framer-motion` は依存に含まれますが、**使っているのは `AnimatedNavItem` と `ActiveIndicator` の 2 つだけ**です。
+既定の `NavItem` はCSSだけでアクティブ背景を描くので含みません。
+
+| 利用側の import | bundle (gzip) |
+|---|---|
+| `Button` / `Input` / `Table` / `Dialog` / `Badge` | 43 KB |
+| 上記 + framer-motion を含む部品 | 83 KB |
+
+配布物は依存をexternalにし、componentごとにfileを分けている（`vite.config.ts`）ため、
+**この2つを使わないApplicationのbundleにはframer-motionは入りません**。
+一方でinstallは全利用側で発生します（framer-motion + motion-dom + motion-utils で約11MB）。
+
+optionalなpeerDependencyへ移す案は、barrel（`components/application/index.ts`）が
+`ActiveIndicator` / `AnimatedNavItem` をre-exportしている限り成立しません。未installの
+利用側では `{ Button }` だけのimportでもbundlerの解決が失敗します（tree-shakingより前に
+解決が走るため）。移すならsubpath exportへ出す必要があります。
+
+新しいcomponentをframer-motionで作らないこと。
+
 Application codeでは固定aliasを使います。
 
 ```tsx

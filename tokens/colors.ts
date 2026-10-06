@@ -196,7 +196,7 @@ export const STATUS_COLORS = [
  * アバターの色
  *
  * ユーザーは blue、システム・匿名は gray に統一する。
- * 出典: design-system/colors.md
+ * 対応するテンプレート用クラスは design-system/README.md §3 の `.avatar-sm` / `.avatar-md` / `.avatar-lg`。
  */
 export const AVATAR_COLORS = {
   user: "bg-blue-100 text-blue-700",
