@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.5.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.5.0...application-ui-kit-v7.5.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **FileDropZone:** 枠のどこを押してもファイル選択を開く ([#77](https://github.com/hamirilo/ui-platform/issues/77)) ([99b0fc9](https://github.com/hamirilo/ui-platform/commit/99b0fc9368508308c9a7df3ba73a4f1f197ec8ed))
+
 ## [7.5.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.4.2...application-ui-kit-v7.5.0) (2026-09-28)
 
 
