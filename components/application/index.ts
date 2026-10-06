@@ -101,7 +101,7 @@ export { FormFieldSet } from "./FormFieldSet";
 export type { FormFieldSetProps } from "./FormFieldSet";
 
 export { Tabs } from "./Tabs";
-export type { TabsProps, TabItem } from "./Tabs";
+export type { TabsProps, TabItem, TabsVariant, TabsOrientation } from "./Tabs";
 
 export { Pagination } from "./Pagination";
 export type { PaginationProps } from "./Pagination";

@@ -4,10 +4,18 @@
  * 同じ階層にある複数のビューを切り替えるために使う。
  * URL やページ遷移を伴う切り替えにはリンク + ナビゲーションを使い、
  * Tabs は同一画面内でのビュー切り替えに限定する。
+ *
+ * shadcn/ui の Tabs を `items` 配列 1 本で組み立てる形にしたもの。
+ * 見た目（`variant`）と並び（`orientation`）は primitive が持つものをそのまま通す。
+ * テンプレート側の `.tabs` / `.tab` / `.tab-active`（tokens/classes.css）と 1:1。
  */
 
 import * as React from "react";
 import { TabsContent, TabsList, Tabs as TabsPrimitive, TabsTrigger } from "../ui/tabs";
+
+export type TabsVariant = "default" | "line";
+
+export type TabsOrientation = "horizontal" | "vertical";
 
 export interface TabItem {
   /** タブの一意な値 */
@@ -35,7 +43,24 @@ export interface TabsProps {
   /** 選択が変わったときに呼ばれる */
   onValueChange?: (value: string) => void;
 
+  /**
+   * タブの見た目
+   * - default: 面で囲んだタブ（既定）
+   * - line: 下線だけのタブ。本文と地続きに見せたいときに使う
+   * @default "default"
+   */
+  variant?: TabsVariant;
+
+  /**
+   * 並び。vertical はタブを左、パネルを右に置く
+   * @default "horizontal"
+   */
+  orientation?: TabsOrientation;
+
   className?: string;
+
+  /** タブ一覧（TabsList）に付けるクラス */
+  listClassName?: string;
 }
 
 /**
@@ -50,19 +75,38 @@ export interface TabsProps {
  *   ]}
  *   defaultValue="overview"
  * />
+ *
+ * // 下線だけのタブ（本文と地続きに見せる）
+ * <Tabs items={items} variant="line" />
+ *
+ * // 縦並び（タブが多い設定画面など）
+ * <Tabs items={items} orientation="vertical" />
  * ```
  */
 export const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
-  ({ items, value, defaultValue, onValueChange, className }, ref) => {
+  (
+    {
+      items,
+      value,
+      defaultValue,
+      onValueChange,
+      variant = "default",
+      orientation = "horizontal",
+      className,
+      listClassName,
+    },
+    ref,
+  ) => {
     return (
       <TabsPrimitive
         ref={ref}
         value={value}
         defaultValue={defaultValue ?? items[0]?.value}
         onValueChange={onValueChange as (v: unknown) => void}
+        orientation={orientation}
         className={className}
       >
-        <TabsList>
+        <TabsList variant={variant} className={listClassName}>
           {items.map((item) => (
             <TabsTrigger key={item.value} value={item.value} disabled={item.disabled}>
               <span className="inline-flex items-center gap-1.5">
