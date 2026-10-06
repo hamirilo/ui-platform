@@ -45,6 +45,13 @@ const meta = {
 タブは JSX の子要素ではなく **\`items\` 配列**で渡す。各項目の \`content\` に
 パネルの内容を渡す（選択中のタブだけが DOM に残る）。
 
+見た目と並びは shadcn/ui の Tabs が持つものをそのまま通す。
+
+| Prop | 値 | 使い分け |
+|---|---|---|
+| \`variant\` | \`default\`（既定）/ \`line\` | \`line\` は下線だけ。パネルを本文と地続きに見せたいとき |
+| \`orientation\` | \`horizontal\`（既定）/ \`vertical\` | \`vertical\` はタブ名が長い・数が多い設定画面向け |
+
 ## 注意事項
 
 - 矢印キーでタブ間を移動できる（\`Tab\`/\`Enter\`/\`Space\` で確定）
@@ -117,6 +124,23 @@ export const Overview: Story = {
             },
           ]}
         />
+      </Section>
+
+      <Section
+        title="Variant"
+        note="default は面で囲む。line は下線だけで、本文と地続きに見せたいときに使う。"
+      >
+        <div className="flex flex-col gap-6">
+          <Tabs items={BASIC_ITEMS} />
+          <Tabs items={BASIC_ITEMS} variant="line" />
+        </div>
+      </Section>
+
+      <Section
+        title="Orientation"
+        note="vertical はタブを左、パネルを右に置く。タブ名が長い・数が多い設定画面向け。"
+      >
+        <Tabs items={BASIC_ITEMS} orientation="vertical" />
       </Section>
 
       <Section
@@ -226,4 +250,14 @@ export const WithCard: Story = {
       <Tabs items={BASIC_ITEMS} />
     </Card>
   ),
+};
+
+/** 下線だけのタブ。パネルを本文と地続きに見せたいときに使う。 */
+export const LineVariant: Story = {
+  args: { items: BASIC_ITEMS, variant: "line" },
+};
+
+/** 縦並び。タブ名が長い、または数が多い設定画面で使う。 */
+export const Vertical: Story = {
+  args: { items: BASIC_ITEMS, orientation: "vertical" },
 };
