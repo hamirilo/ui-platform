@@ -8,8 +8,20 @@
  * 画面側では DatePicker のみを使用し、Calendar/Popover を直接使用しないでください。
  */
 
-import { format, isValid } from "date-fns";
-import { ja } from "date-fns/locale";
+import {
+  addDays,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isValid,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+  subMonths,
+} from "date-fns";
+import { ja } from "date-fns/locale/ja";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
@@ -18,6 +30,7 @@ import { cn } from "../../lib/utils";
 import { Calendar } from "../ui/calendar";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "../ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "./Button";
 
 const DISPLAY_FORMAT = "yyyy-MM-dd";
 const SHORT_FORMAT = "M/d";
@@ -27,6 +40,14 @@ const MULTIPLE_LABEL_LIMIT = 3;
 
 export type DatePickerMode = "single" | "range" | "multiple";
 export type DatePickerValue = Date | DateRange | Date[];
+
+/**
+ * プリセットの定義
+ */
+export interface DatePickerPreset<T = DatePickerValue> {
+  label: string;
+  value: T | (() => T);
+}
 
 export interface DatePickerProps {
   /**
@@ -81,6 +102,16 @@ export interface DatePickerProps {
   className?: string;
 
   /**
+   * プリセットボタンの表示設定
+   * - true: モードに応じた標準プリセットを表示
+   *   - single: 「今日」「明日」「昨日」
+   *   - range: 「今日」「今週」「今月」「先月」「過去7日間」「過去30日間」
+   * - DatePickerPreset[]: カスタムプリセット配列を表示
+   * - false / undefined: プリセットを表示しない（デフォルト）
+   */
+  presets?: boolean | DatePickerPreset[];
+
+  /**
    * 入力欄の id。
    *
    * <important>
@@ -102,6 +133,42 @@ export interface DatePickerProps {
 
   /** エラー状態（FormField が自動で渡す） */
   "aria-invalid"?: boolean;
+}
+
+/**
+ * ISO 形式の日付文字列（`YYYY-MM-DD`）を Date にする（ローカル時刻の 0 時）。
+ *
+ * DatePicker の値は Date だが、API のレスポンスやフォームの state、hidden input は
+ * 日付を文字列で持つことが多い。その間の変換に使う。末尾に時刻が付いていても日付部分だけを読む。
+ * 空・不正な値は undefined（DatePicker の「未選択」）。
+ *
+ * ```tsx
+ * <DatePicker
+ *   value={parseIsoDate(startedOn)}
+ *   onChange={(next) => setStartedOn(formatIsoDate(next as Date | undefined))}
+ * />
+ * ```
+ */
+export function parseIsoDate(value?: string | null): Date | undefined {
+  if (!value) return undefined;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  if (!match) return undefined;
+  const [, year, month, day] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
+/**
+ * Date を ISO 形式の日付文字列（`YYYY-MM-DD`）にする。未選択（undefined）は空文字。
+ *
+ * `toISOString()` は UTC に直すため、日本時間の 0〜9 時台は前日の日付になる。
+ * こちらはローカル時刻の年月日をそのまま使う。
+ */
+export function formatIsoDate(date?: Date | null): string {
+  if (!date) return "";
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -227,6 +294,140 @@ function isDateWithinLimits(date: Date, minDate?: Date, maxDate?: Date): boolean
   return true;
 }
 
+/**
+ * 選択モードに応じた標準プリセットを生成する
+ */
+export function getDefaultPresets(
+  mode: DatePickerMode,
+  referenceDate: Date = new Date(),
+): DatePickerPreset[] {
+  const today = startOfDay(referenceDate);
+
+  if (mode === "single") {
+    return [
+      {
+        label: "今日",
+        value: () => today,
+      },
+      {
+        label: "明日",
+        value: () => addDays(today, 1),
+      },
+      {
+        label: "昨日",
+        value: () => subDays(today, 1),
+      },
+    ];
+  }
+
+  if (mode === "range") {
+    return [
+      {
+        label: "今日",
+        value: () => ({ from: today, to: today }),
+      },
+      {
+        label: "今週",
+        value: () => ({
+          from: startOfWeek(today, { weekStartsOn: 1 }),
+          to: endOfWeek(today, { weekStartsOn: 1 }),
+        }),
+      },
+      {
+        label: "今月",
+        value: () => ({
+          from: startOfMonth(today),
+          to: endOfMonth(today),
+        }),
+      },
+      {
+        label: "先月",
+        value: () => {
+          const lastMonth = subMonths(today, 1);
+          return {
+            from: startOfMonth(lastMonth),
+            to: endOfMonth(lastMonth),
+          };
+        },
+      },
+      {
+        label: "過去7日間",
+        value: () => ({
+          from: subDays(today, 6),
+          to: today,
+        }),
+      },
+      {
+        label: "過去30日間",
+        value: () => ({
+          from: subDays(today, 29),
+          to: today,
+        }),
+      },
+    ];
+  }
+
+  return [];
+}
+
+/**
+ * プリセット値が選択可能範囲内（minDate/maxDate）にあるかを判定する
+ */
+export function isPresetDisabled(val: DatePickerValue, minDate?: Date, maxDate?: Date): boolean {
+  if (val instanceof Date) {
+    return !isDateWithinLimits(val, minDate, maxDate);
+  }
+  if (Array.isArray(val)) {
+    return !val.every((d) => isDateWithinLimits(d, minDate, maxDate));
+  }
+  if (typeof val === "object" && val !== null && "from" in val) {
+    const range = val as DateRange;
+    if (range.from && !isDateWithinLimits(range.from, minDate, maxDate)) return true;
+    if (range.to && !isDateWithinLimits(range.to, minDate, maxDate)) return true;
+    return false;
+  }
+  return false;
+}
+
+/**
+ * プリセット値が現在選択中の値と一致しているかを判定する
+ */
+export function isPresetActive(
+  presetVal: DatePickerValue,
+  currentVal?: DatePickerValue,
+  mode: DatePickerMode = "single",
+): boolean {
+  if (!currentVal) return false;
+
+  if (mode === "single") {
+    if (!(presetVal instanceof Date) || !(currentVal instanceof Date)) return false;
+    return isSameDay(presetVal, currentVal);
+  }
+
+  if (mode === "range") {
+    const pRange = presetVal as DateRange;
+    const cRange = currentVal as DateRange;
+    if (!pRange.from || !cRange.from) return false;
+
+    const fromMatch = isSameDay(pRange.from, cRange.from);
+    if (!fromMatch) return false;
+
+    if (!pRange.to && !cRange.to) return true;
+    if (pRange.to && cRange.to) {
+      return isSameDay(pRange.to, cRange.to);
+    }
+    return false;
+  }
+
+  if (mode === "multiple") {
+    if (!Array.isArray(presetVal) || !Array.isArray(currentVal)) return false;
+    if (presetVal.length !== currentVal.length) return false;
+    return presetVal.every((d, i) => isSameDay(d, currentVal[i]));
+  }
+
+  return false;
+}
+
 export function formatValue(mode: DatePickerMode, value?: DatePickerValue): string {
   if (!value) return "";
 
@@ -282,6 +483,7 @@ export function DatePicker({
   minDate,
   maxDate,
   className,
+  presets,
   id,
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
@@ -295,6 +497,12 @@ export function DatePicker({
 
   const [inputValue, setInputValue] = React.useState(() => formatValue(mode, currentValue));
   const [isFocused, setIsFocused] = React.useState(false);
+
+  const resolvedPresets: DatePickerPreset[] = React.useMemo(() => {
+    if (!presets) return [];
+    if (Array.isArray(presets)) return presets;
+    return getDefaultPresets(mode);
+  }, [presets, mode]);
 
   const updateValue = React.useCallback(
     (newVal: DatePickerValue | undefined) => {
@@ -319,6 +527,41 @@ export function DatePicker({
   ];
   const disabledMatcher = dateLimits.length > 0 ? dateLimits : undefined;
 
+  // カレンダーの表示月（入力または選択値に基づく初期値）
+  const getInitialMonth = React.useCallback(() => {
+    if (mode === "single") {
+      const d =
+        (currentValue as Date | undefined) ??
+        (inputValue ? parseSingleDateString(inputValue) : undefined);
+      return d ?? new Date();
+    }
+    if (mode === "range") {
+      const r = currentValue as DateRange | undefined;
+      return r?.from ?? new Date();
+    }
+    if (mode === "multiple") {
+      const d = currentValue as Date[] | undefined;
+      return d?.[0] ?? new Date();
+    }
+    return new Date();
+  }, [mode, currentValue, inputValue]);
+
+  const [month, setMonth] = React.useState<Date>(getInitialMonth);
+
+  // Popover が開いたときに、選択中の値があればその月に合わせる
+  React.useEffect(() => {
+    if (open) {
+      if (mode === "single" && currentValue instanceof Date) {
+        setMonth(currentValue);
+      } else if (mode === "range") {
+        const from = (currentValue as DateRange | undefined)?.from;
+        if (from) setMonth(from);
+      } else if (mode === "multiple" && Array.isArray(currentValue) && currentValue[0]) {
+        setMonth(currentValue[0]);
+      }
+    }
+  }, [open, mode, currentValue]);
+
   // テキスト入力をコミット（確定・反映）
   const commitInput = React.useCallback(
     (text: string) => {
@@ -334,6 +577,7 @@ export function DatePicker({
         if (parsed && isDateWithinLimits(parsed, minDate, maxDate)) {
           updateValue(parsed);
           setInputValue(format(parsed, DISPLAY_FORMAT, { locale: ja }));
+          setMonth(parsed);
         } else {
           // 不正または制限外の場合は元の値にリセット
           setInputValue(formatValue(mode, currentValue));
@@ -347,6 +591,7 @@ export function DatePicker({
         ) {
           updateValue(parsed);
           setInputValue(formatValue(mode, parsed));
+          if (parsed.from) setMonth(parsed.from);
         } else {
           setInputValue(formatValue(mode, currentValue));
         }
@@ -355,6 +600,7 @@ export function DatePicker({
         if (parsed?.every((d) => isDateWithinLimits(d, minDate, maxDate))) {
           updateValue(parsed);
           setInputValue(formatValue(mode, parsed));
+          if (parsed[0]) setMonth(parsed[0]);
         } else {
           setInputValue(formatValue(mode, currentValue));
         }
@@ -389,24 +635,24 @@ export function DatePicker({
     }
   };
 
-  // カレンダーの表示月（入力または選択値に基づく）
-  const defaultMonth = React.useMemo(() => {
-    if (mode === "single") {
-      const d =
-        (currentValue as Date | undefined) ??
-        (inputValue ? parseSingleDateString(inputValue) : undefined);
-      return d ?? undefined;
+  const handleSelectPreset = (preset: DatePickerPreset) => {
+    const rawVal = typeof preset.value === "function" ? preset.value() : preset.value;
+    if (isPresetDisabled(rawVal, minDate, maxDate)) {
+      return;
     }
-    if (mode === "range") {
-      const r = currentValue as DateRange | undefined;
-      return r?.from ?? undefined;
+    updateValue(rawVal);
+    setInputValue(formatValue(mode, rawVal));
+
+    if (rawVal instanceof Date) {
+      setMonth(rawVal);
+    } else if (Array.isArray(rawVal) && rawVal.length > 0) {
+      setMonth(rawVal[0]);
+    } else if (rawVal && typeof rawVal === "object" && "from" in rawVal && rawVal.from) {
+      setMonth(rawVal.from);
     }
-    if (mode === "multiple") {
-      const d = currentValue as Date[] | undefined;
-      return d?.[0] ?? undefined;
-    }
-    return undefined;
-  }, [mode, currentValue, inputValue]);
+
+    setOpen(false);
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -420,6 +666,8 @@ export function DatePicker({
         <InputGroupInput
           id={id}
           type="text"
+          // ブラウザの入力履歴がカレンダーのポップオーバーに重なるため出さない
+          autoComplete="off"
           disabled={disabled}
           placeholder={placeholder}
           value={inputValue}
@@ -442,46 +690,82 @@ export function DatePicker({
         </InputGroupAddon>
       </InputGroup>
       <PopoverContent className="w-auto p-0" align="start">
-        {mode === "multiple" ? (
-          <Calendar
-            mode="multiple"
-            locale={ja}
-            selected={currentValue as Date[] | undefined}
-            onSelect={(dates) => {
-              updateValue(dates);
-              setInputValue(formatValue(mode, dates));
-            }}
-            disabled={disabledMatcher}
-            numberOfMonths={2}
-            defaultMonth={defaultMonth}
-          />
-        ) : mode === "range" ? (
-          <Calendar
-            mode="range"
-            locale={ja}
-            selected={currentValue as DateRange | undefined}
-            onSelect={(range) => {
-              updateValue(range);
-              setInputValue(formatValue(mode, range));
-            }}
-            disabled={disabledMatcher}
-            numberOfMonths={2}
-            defaultMonth={defaultMonth}
-          />
-        ) : (
-          <Calendar
-            mode="single"
-            locale={ja}
-            selected={currentValue as Date | undefined}
-            onSelect={(date) => {
-              updateValue(date);
-              setInputValue(formatValue(mode, date));
-              setOpen(false);
-            }}
-            disabled={disabledMatcher}
-            defaultMonth={defaultMonth}
-          />
-        )}
+        <div className={cn("flex flex-col", resolvedPresets.length > 0 && "sm:flex-row")}>
+          {resolvedPresets.length > 0 && (
+            <div className="flex flex-row flex-wrap sm:flex-col gap-1 border-b sm:border-b-0 sm:border-r border-border p-2 sm:w-32 shrink-0">
+              <div className="w-full text-xs font-medium text-muted-foreground px-2 py-1">
+                プリセット
+              </div>
+              {resolvedPresets.map((preset) => {
+                const rawVal = typeof preset.value === "function" ? preset.value() : preset.value;
+                const isDisabled = isPresetDisabled(rawVal, minDate, maxDate);
+                const isActive = isPresetActive(rawVal, currentValue, mode);
+
+                return (
+                  <Button
+                    key={preset.label}
+                    type="button"
+                    variant={isActive ? "secondary" : "ghost"}
+                    size="sm"
+                    disabled={isDisabled}
+                    className={cn(
+                      "justify-start h-8 px-2 text-xs font-normal",
+                      isActive && "font-medium bg-muted",
+                    )}
+                    onClick={() => handleSelectPreset(preset)}
+                  >
+                    {preset.label}
+                  </Button>
+                );
+              })}
+            </div>
+          )}
+          <div>
+            {mode === "multiple" ? (
+              <Calendar
+                mode="multiple"
+                locale={ja}
+                selected={currentValue as Date[] | undefined}
+                onSelect={(dates) => {
+                  updateValue(dates);
+                  setInputValue(formatValue(mode, dates));
+                }}
+                disabled={disabledMatcher}
+                numberOfMonths={2}
+                month={month}
+                onMonthChange={setMonth}
+              />
+            ) : mode === "range" ? (
+              <Calendar
+                mode="range"
+                locale={ja}
+                selected={currentValue as DateRange | undefined}
+                onSelect={(range) => {
+                  updateValue(range);
+                  setInputValue(formatValue(mode, range));
+                }}
+                disabled={disabledMatcher}
+                numberOfMonths={2}
+                month={month}
+                onMonthChange={setMonth}
+              />
+            ) : (
+              <Calendar
+                mode="single"
+                locale={ja}
+                selected={currentValue as Date | undefined}
+                onSelect={(date) => {
+                  updateValue(date);
+                  setInputValue(formatValue(mode, date));
+                  setOpen(false);
+                }}
+                disabled={disabledMatcher}
+                month={month}
+                onMonthChange={setMonth}
+              />
+            )}
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );

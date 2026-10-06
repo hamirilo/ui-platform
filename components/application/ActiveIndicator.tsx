@@ -1,19 +1,17 @@
 /**
- * ActiveIndicator - 選択中の位置を示す装飾の面（NavItem の内部で使う）
+ * ActiveIndicator - 選択中の位置を示す装飾の面
  *
  * Framer Motion の Shared Layout（`layoutId`）で、同じ `layoutId` を持つ項目の間を
  * 面が移動する。操作もアクセシビリティも持たない装飾専用（`aria-hidden`）で、
- * 操作と読み上げは親（NavItem 等）が持つ。
+ * 操作と読み上げは親（AnimatedNavItem 等）が持つ。
  *
  * <important>
- * **このキットで `framer-motion` を使うのはこの部品と NavItem だけ。**
- * 配布物は依存を external にして部品ごとに file を分けてあるので、NavItem を
+ * **このキットで `framer-motion` を使うのはこの部品と AnimatedNavItem だけ。**
+ * 既定の NavItem は CSS だけの StaticIndicator を描くので framer-motion を含まない。
+ * 配布物は依存を external にして部品ごとに file を分けてあるため、この 2 つを
  * 使わない利用側の bundle には入らない（実測: 使わないと 43KB、使うと 83KB / gzip）。
  *
- * 新しい部品を framer-motion で作らないこと。この依存を optional な peerDependency へ
- * 移す案は、barrel（index.ts）がこの部品を re-export している限り成立しない
- * （未 install の利用側では `{ Button }` だけの import でも build が解決に失敗する）。
- * 移すなら NavItem ごと subpath export へ出す必要がある。
+ * 新しい部品を framer-motion で作らないこと。
  * </important>
  */
 

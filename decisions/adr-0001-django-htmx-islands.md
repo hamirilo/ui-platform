@@ -59,3 +59,12 @@ WebSocket等、異なる接続方式が複数Applicationで繰り返される場
 
 決定1〜6は変えない。`confirm-host` の `hx-confirm` 横取りはオプトイン（`data-intercept-hx-confirm`）とし、
 利用側が既に自前のリスナーを持っていても壊れないようにした。
+
+## 追記（2026-09）: kit標準Islandの遅延登録
+
+[ADR-0008](adr-0008-keep-unused-heavy-dependencies-out-of-consumer-bundles.md) で、auto-mountがkit標準のIslandを
+すべて静的に登録していたのをやめ、遅延読み込みで登録するようにした。マウント処理は副作用のない `islands` entryへ移し、
+`auto-mount` はそれを呼ぶだけの副作用entryになった。決定1〜6は変えない。
+
+- registryはアプリの登録とkit標準の2層で、同じ名前ならアプリの登録を使う。
+- 最初の走査はmicrotaskまで遅らせ、auto-mountの静的importの後に書いた登録も間に合うようにした。

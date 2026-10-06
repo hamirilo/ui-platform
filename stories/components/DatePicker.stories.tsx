@@ -58,6 +58,7 @@ const meta = {
 | \`disabled\` | \`boolean\` | 無効化 |
 | \`error\` | \`boolean\` | エラー状態（枠線が赤色になり \`aria-invalid\` が付く） |
 | \`minDate\` / \`maxDate\` | \`Date\` | 選択可能な範囲。範囲外はカレンダー上で選べず、直接入力でも弾かれます |
+| \`presets\` | \`boolean\` / \`DatePickerPreset[]\` | カレンダーPopover内にプリセットボタンを表示（\`true\` で標準、配列でカスタム） |
 | \`className\` | \`string\` | 入力フィールドへの追加クラス（幅の指定など） |
 
 モードごとの型の扱い:
@@ -428,12 +429,115 @@ export const InForm: Story = {
 };
 
 /**
- * プリセットの併設。
+ * 組み込みプリセット（`presets={true}`）。
  *
- * 「今月」「先月」のような相対指定はカレンダーでは手数が多い。
- * よく使う期間はボタンで一発で入るようにする。
+ * カレンダーの Popover 内に「今日」「今週」「今月」「先月」「過去7日間」「過去30日間」のボタンが表示されます。
+ * クリックするとカレンダーの表示月も連動し、1クリックで期間を選択・確定できます。
  */
 export const WithPresets: Story = {
+  render: (args) => {
+    const [range, setRange] = React.useState<DateRange | undefined>(undefined);
+
+    return (
+      <div className="space-y-3">
+        <DatePicker
+          {...args}
+          mode="range"
+          presets
+          value={range}
+          onChange={(v) => setRange(v as DateRange | undefined)}
+          placeholder="期間を選択（プリセット付き）"
+          className="w-80"
+        />
+        <p className="text-sm text-muted-foreground">
+          from: {range?.from?.toLocaleDateString("ja-JP") ?? "—"} / to:{" "}
+          {range?.to?.toLocaleDateString("ja-JP") ?? "—"}
+        </p>
+      </div>
+    );
+  },
+};
+
+/**
+ * 単一日付の組み込みプリセット（`mode="single"` + `presets={true}`）。
+ *
+ * 「今日」「明日」「昨日」などのショートカットが Popover 内に表示されます。
+ */
+export const WithSinglePresets: Story = {
+  render: (args) => {
+    const [date, setDate] = React.useState<Date | undefined>(undefined);
+
+    return (
+      <div className="space-y-3">
+        <DatePicker
+          {...args}
+          mode="single"
+          presets
+          value={date}
+          onChange={(v) => setDate(v as Date | undefined)}
+          placeholder="日付を選択（プリセット付き）"
+          className="w-64"
+        />
+        <p className="text-sm text-muted-foreground">
+          選択値: {date ? date.toLocaleDateString("ja-JP") : "（未選択）"}
+        </p>
+      </div>
+    );
+  },
+};
+
+/**
+ * カスタムプリセット（`presets={DatePickerPreset[]}`）。
+ *
+ * 業務固有のプリセット（「四半期末」「次年度初日」など）を配列で柔軟に渡せます。
+ */
+export const WithCustomPresets: Story = {
+  render: (args) => {
+    const [range, setRange] = React.useState<DateRange | undefined>(undefined);
+
+    const customPresets = [
+      {
+        label: "上半期",
+        value: () => {
+          const year = new Date().getFullYear();
+          return { from: new Date(year, 3, 1), to: new Date(year, 8, 30) };
+        },
+      },
+      {
+        label: "下半期",
+        value: () => {
+          const year = new Date().getFullYear();
+          return { from: new Date(year, 9, 1), to: new Date(year + 1, 2, 31) };
+        },
+      },
+    ];
+
+    return (
+      <div className="space-y-3">
+        <DatePicker
+          {...args}
+          mode="range"
+          presets={customPresets}
+          value={range}
+          onChange={(v) => setRange(v as DateRange | undefined)}
+          placeholder="年度期間を選択"
+          className="w-80"
+        />
+        <p className="text-sm text-muted-foreground">
+          from: {range?.from?.toLocaleDateString("ja-JP") ?? "—"} / to:{" "}
+          {range?.to?.toLocaleDateString("ja-JP") ?? "—"}
+        </p>
+      </div>
+    );
+  },
+};
+
+/**
+ * 外部ボタングループによるプリセット併設。
+ *
+ * 画面上のデザイン要件で、カレンダーの外側（入力欄の上など）にボタングループを常時表示したい場合。
+ */
+export const WithExternalButtons: Story = {
   render: (args) => {
     const [range, setRange] = React.useState<DateRange | undefined>(undefined);
 

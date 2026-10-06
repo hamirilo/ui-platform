@@ -11,6 +11,7 @@
  * - Django の `<input type="file">` と組み合わせるときは `onBrowse` を渡して内部 input を描かない。
  *   name の重複を避けるため（Islands の `file-drop-zone` がこの形を使う）。
  * - 選択済み一覧の削除は `onFilesChange` に残りを渡すだけ。親が `files` を持つ制御コンポーネント。
+ * - 枠のどこを押しても選択が開く（ボタンと同じ処理）。キーボードの入口はボタンだけにしてある。
  * </important>
  */
 
@@ -214,7 +215,16 @@ export const FileDropZone = React.forwardRef<HTMLDivElement, FileDropZoneProps>(
         }}
         {...props}
       >
-        <div className="cn-file-drop-zone-area">
+        {/* 点線の枠は押せそうに見えるので、枠のどこを押しても選択を開く（ボタンだけだと空振りになる）。
+            キーボードはボタンが受け持つので、枠はフォーカスを取らない（Tab で 2 回止まらない）。 */}
+        <div
+          className="cn-file-drop-zone-area"
+          onClick={(event) => {
+            // ボタンは自分で browse を呼ぶ。input は browse が送った click の伝播。どちらも二重に開かない
+            if ((event.target as HTMLElement).closest("button, input")) return;
+            browse();
+          }}
+        >
           <Upload aria-hidden="true" className="cn-file-drop-zone-icon" />
           <div className="cn-file-drop-zone-text">
             <p className="cn-file-drop-zone-label">{label}</p>

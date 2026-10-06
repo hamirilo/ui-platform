@@ -41,23 +41,7 @@
 
 import { useEffect, useState } from "react";
 import type { DateRange } from "react-day-picker";
-import { DatePicker } from "../application/DatePicker";
-
-function parseIsoDate(value?: string): Date | undefined {
-  if (!value) return undefined;
-  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
-  if (!match) return undefined;
-  const [, year, month, day] = match;
-  return new Date(Number(year), Number(month) - 1, Number(day));
-}
-
-function formatIsoDate(date?: Date): string {
-  if (!date) return "";
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+import { DatePicker, formatIsoDate, parseIsoDate } from "../application/DatePicker";
 
 export interface DatePickerIslandProps {
   /**
@@ -111,6 +95,11 @@ export interface DatePickerIslandProps {
    * 選択可能な最大日付（ISO 形式）
    */
   maxDate?: string;
+
+  /**
+   * プリセットボタンの表示
+   */
+  presets?: boolean;
 }
 
 function useHiddenInputSync(targetId: string | undefined, isoValue: string) {
@@ -132,6 +121,7 @@ export function DatePickerIsland({
   placeholder,
   minDate,
   maxDate,
+  presets,
 }: DatePickerIslandProps) {
   const [singleDate, setSingleDate] = useState<Date | undefined>(() => parseIsoDate(value));
   const [range, setRange] = useState<DateRange | undefined>(() => {
@@ -157,6 +147,7 @@ export function DatePickerIsland({
         placeholder={placeholder}
         minDate={parseIsoDate(minDate)}
         maxDate={parseIsoDate(maxDate)}
+        presets={presets}
       />
     );
   }
@@ -169,6 +160,7 @@ export function DatePickerIsland({
       placeholder={placeholder}
       minDate={parseIsoDate(minDate)}
       maxDate={parseIsoDate(maxDate)}
+      presets={presets}
     />
   );
 }

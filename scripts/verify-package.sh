@@ -8,6 +8,9 @@
 # CI の `bun run build` はこのリポジトリの node_modules を使うので、
 # この種の宣言漏れを検出できない。
 #
+# 一部だけを import した利用側で、使わない重い依存が初期ロードに入らないことも確認する
+# （NavItem だけなら framer-motion なし、auto-mount だけなら DatePicker の依存なし。decisions/adr-0008）。
+#
 # 併せて、Tailwind の CSS が利用側へ届くことも確認する。
 #   - tokens/theme.css の @import 連鎖（motion / fonts / scale / tokens / components / classes）
 #   - theme.css の `@source "../components"`（パッケージ内の .tsx のクラス名）
@@ -74,6 +77,9 @@ npm install --install-strategy=nested --no-audit --no-fund
 echo "▶ npm run build:islands (dist の JS と、宣言済み依存だけで解決できるか)"
 npm run build:islands
 
+echo "▶ npm run check:bundle (一部だけ import したとき、使わない重い依存が初期ロードに入らないか)"
+npm run check:bundle
+
 echo "▶ npm run build:css (theme.css の @import と @source が届くか)"
 npm run build:css
 
@@ -98,6 +104,9 @@ check "classes.css のページ送り・手順・定義リストが届いてい�
 check "classes.css の手順が届いている (step-marker)" "step-marker"
 check "classes.css の定義リストが届いている (description-list)" "description-list"
 check "classes.css の絞り込みバーが届いている (filter-bar)" "filter-bar"
+check "classes.css の星の評価が届いている (rating-star)" "rating-star"
+check "classes.css の空状態が届いている (empty-title)" "empty-title"
+check "classes.css の一覧の 1 行が届いている (item-group)" "item-group"
 check "tokens.css のステータス Token が届いている (--color-status-new)" "\-\-color-status-new"
 check "components.css が届いている (cn-button)" "cn-button"
 check "motion.css が届いている (--motion-duration-base)" "\-\-motion-duration-base"

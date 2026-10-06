@@ -82,11 +82,12 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | toast | 補助的なフィードバック（`alert()` を使わない） |
 | Table | 一覧。空状態が必須の API |
 | RadioTable | 表から1行を選ばせる。プラン・送付先など列で比較して決める選択 |
-| Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション。Tabs は `variant`（default / line）と `orientation`（horizontal / vertical）を持つ。NavItem は `framer-motion`（optional な peerDependency）を必要とする |
+| Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション。Tabs は `variant`（default / line）と `orientation`（horizontal / vertical）を持つ。NavItem のアクティブ背景を項目間で動かしたい（同じページ内で切り替える）ときだけ AnimatedNavItem（framer-motion を含む） |
 | Badge / ActiveIndicator | 状態表示 |
 | Alert | 継続して伝える注意・案内（フォーム全体のエラー、未完了の設定、権限による制限）。ページ幅のお知らせは `variant="banner"` |
 | PageHeader / Breadcrumbs | 画面の見出し領域（見出し・説明・主操作・タブ）と現在位置 |
 | Stat | KPI・統計タイル（ラベル・値・単位・増減） |
+| Rating | 星の評価。`onChange` を渡すと入力、渡さなければ表示専用。一覧の表示専用はテンプレートの `.rating` |
 | FileDropZone | ファイルの選択・ドロップ・事前チェック（種類・サイズ・件数）。Django の input と組むなら Islands の `file-drop-zone` |
 | Steps | 手順の進み具合（done / current / error / upcoming）。ウィザードや申請フロー |
 | DescriptionList | 詳細画面の項目名と値。空は「—」 |
@@ -95,6 +96,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | Pagination（`totalCount` / `pageSizeOptions`） | 件数表記「N 件中 a–b 件」と表示件数の切替 |
 | Dropdown | メニュー |
 | ThemeToggle | ライト/ダーク切替 |
+| ProductSwitcher | 同じ組織の別プロダクトへ移る（ヘッダー右上）。一覧は items で渡し、取得はしない |
 
 **shadcn/ui をそのまま公開している部品:** Card / Spinner / Progress /
 Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / Tooltip / Popover / Avatar
@@ -108,7 +110,7 @@ Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / To
 | テンプレート用クラス | React 側 | 用途 |
 |---|---|---|
 | `.btn-primary` / `.btn-secondary` / `.btn-success` / `.btn-danger`（`.btn-xs` / `.btn-sm` / `.btn-lg`） | Button | 操作 |
-| `.input-field` | Input / Select / Textarea | フォーム入力 |
+| `.input-field` | Input / Select / Textarea | フォーム入力。エラーは `aria-invalid` を付けると枠が danger になる（React 側と同じ） |
 | `.card` / `.card-sm` / `.card-lg` | Card | 面 |
 | `.badge` + `.badge-{tone}` | Badge `tone` | 状態表示。`models.py` の `*_display_class` は tone クラス名を返す |
 | `.alert` + `.alert-{tone}`（`.alert-banner`） | Alert | 継続して伝える注意・案内 |
@@ -126,6 +128,9 @@ Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / To
 | `.steps` / `.step` / `.step-done` / `.step-current` / `.step-error` | Steps | 手順の進み具合 |
 | `textarea.input-field` | Textarea | 複数行入力（React 版は文字数カウンタも持つ） |
 | `.avatar-sm` / `.avatar-md` / `.avatar-lg` | Avatar | 人・システムの丸いアイコン（20 / 28 / 36px） |
+| `.rating` / `.rating-star` / `.rating-star-empty` / `.rating-value` | Rating / Islands `rating` | 星の評価。表示はサーバー、入力は Island（hidden input へ書き戻す） |
+| `.empty` / `.empty-media` / `.empty-title` / `.empty-description` / `.empty-content` | Empty | データが無いときの面。次の操作があるときだけ `.empty-content` |
+| `.item-group` / `.item` / `.item-media` / `.item-content` / `.item-title` / `.item-description` / `.item-actions` | Item / ItemGroup | 一覧の 1 行。列で読み比べるなら `.data-table` |
 | `.filter-bar` / `.filter-bar-field` / `.htmx-indicator` | 対応なし（レイアウト。パターン/一覧表の絞り込み行と同じ配置） | 一覧の上の絞り込み |
 
 - テンプレートでは上のクラスを使い、同じ部品を raw utility の組み合わせや独自 CSS で再実装しない。

@@ -52,11 +52,12 @@ export type { ToastOptions, ToastType } from "./Toast";
 export { Dropdown } from "./Dropdown";
 export type { DropdownProps, DropdownItem } from "./Dropdown";
 
-export { DatePicker } from "./DatePicker";
+export { DatePicker, formatIsoDate, parseIsoDate, getDefaultPresets } from "./DatePicker";
 export type {
   DatePickerProps,
   DatePickerMode,
   DatePickerValue,
+  DatePickerPreset,
 } from "./DatePicker";
 
 export { Input } from "./Input";
@@ -130,11 +131,18 @@ export type {
 export { NavItem } from "./NavItem";
 export type { NavItemProps, NavItemColor } from "./NavItem";
 
+// framer-motion を使うのはこの 2 つだけ。NavItem から参照しないこと（decisions/adr-0008）。
+export { AnimatedNavItem } from "./AnimatedNavItem";
+export type { AnimatedNavItemProps } from "./AnimatedNavItem";
+
 export { ActiveIndicator } from "./ActiveIndicator";
 export type { ActiveIndicatorProps } from "./ActiveIndicator";
 
 export { ThemeToggle } from "./ThemeToggle";
 export type { ThemeToggleProps } from "./ThemeToggle";
+
+export { ProductSwitcher } from "./ProductSwitcher";
+export type { ProductSwitcherProps, ProductSwitcherItem } from "./ProductSwitcher";
 
 export { CopyButton, copyTextToClipboard } from "./CopyButton";
 export type { CopyButtonProps, CopyResult } from "./CopyButton";
@@ -150,6 +158,9 @@ export type { PageHeaderProps } from "./PageHeader";
 
 export { Stat } from "./Stat";
 export type { StatProps, StatTone } from "./Stat";
+
+export { Rating } from "./Rating";
+export type { RatingProps, RatingSize } from "./Rating";
 
 export { FileDropZone } from "./FileDropZone";
 export type { FileDropZoneProps } from "./FileDropZone";

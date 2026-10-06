@@ -124,4 +124,40 @@ describe("FileDropZone", () => {
     fireEvent.click(screen.getByRole("button", { name: "ファイルを選択" }));
     expect(onBrowse).toHaveBeenCalledTimes(1);
   });
+
+  it("枠のどこを押しても選択を開く（ボタン以外の見出し・アイコンの上でも）", () => {
+    const onBrowse = vi.fn();
+    render(<FileDropZone onFilesChange={() => {}} onBrowse={onBrowse} />);
+    fireEvent.click(screen.getByText("ここにファイルをドロップ"));
+    expect(onBrowse).toHaveBeenCalledTimes(1);
+  });
+
+  it("ボタンを押したときは枠のクリックと二重に開かない", () => {
+    const onBrowse = vi.fn();
+    render(<FileDropZone onFilesChange={() => {}} onBrowse={onBrowse} />);
+    fireEvent.click(screen.getByRole("button", { name: "ファイルを選択" }));
+    expect(onBrowse).toHaveBeenCalledTimes(1);
+  });
+
+  it("内部 input のときも枠のクリックで input を 1 回だけ開く", () => {
+    const { container } = render(<FileDropZone onFilesChange={() => {}} />);
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    const opened = vi.fn();
+    input.addEventListener("click", opened);
+    fireEvent.click(screen.getByText("ここにファイルをドロップ"));
+    expect(opened).toHaveBeenCalledTimes(1);
+  });
+
+  it("disabled のときは枠を押しても開かない", () => {
+    const onBrowse = vi.fn();
+    render(<FileDropZone onFilesChange={() => {}} onBrowse={onBrowse} disabled />);
+    fireEvent.click(screen.getByText("ここにファイルをドロップ"));
+    expect(onBrowse).not.toHaveBeenCalled();
+  });
+
+  it("枠はフォーカスを取らない（キーボードの入口はボタンだけ）", () => {
+    const { container } = render(<FileDropZone onFilesChange={() => {}} />);
+    const area = container.querySelector(".cn-file-drop-zone-area") as HTMLElement;
+    expect(area.hasAttribute("tabindex")).toBe(false);
+  });
 });

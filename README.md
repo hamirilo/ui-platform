@@ -103,18 +103,24 @@ GitHub Packagesへpublishされる実package名は `@<owner>/application-ui-kit`
 
 ### framer-motion について
 
-`framer-motion` は依存に含まれますが、**使っているのは `NavItem` と `ActiveIndicator` の 2 つだけ**です。
+`framer-motion` は依存に含まれますが、**使っているのは `AnimatedNavItem` と `ActiveIndicator` の 2 つだけ**です。
+既定の `NavItem` はCSSだけでアクティブ背景を描くので含みません。
 
 | 利用側の import | bundle (gzip) |
 |---|---|
 | `Button` / `Input` / `Table` / `Dialog` / `Badge` | 43 KB |
-| 上記 + `NavItem` | 83 KB |
+| 上記 + framer-motion を含む部品 | 83 KB |
 
 配布物は依存をexternalにし、componentごとにfileを分けている（`vite.config.ts`）ため、
-**NavItemを使わないApplicationのbundleにはframer-motionは入りません**。
+**この2つを使わないApplicationのbundleにはframer-motionは入りません**。
 一方でinstallは全利用側で発生します（framer-motion + motion-dom + motion-utils で約11MB）。
 
-新しいcomponentをframer-motionで作らないこと。増やす場合はこの依存の置き方から見直します。
+optionalなpeerDependencyへ移す案は、barrel（`components/application/index.ts`）が
+`ActiveIndicator` / `AnimatedNavItem` をre-exportしている限り成立しません。未installの
+利用側では `{ Button }` だけのimportでもbundlerの解決が失敗します（tree-shakingより前に
+解決が走るため）。移すならsubpath exportへ出す必要があります。
+
+新しいcomponentをframer-motionで作らないこと。
 
 Application codeでは固定aliasを使います。
 
@@ -154,7 +160,18 @@ Django Templates + htmxのApplication向けに、React Componentを部分的にm
 
 ```ts
 import 'application-ui-kit/islands/auto-mount'
+import { registerIslandComponents, registerIslandLoaders } from 'application-ui-kit/islands'
+
+registerIslandComponents({ 'my-widget': MyWidget })
+registerIslandLoaders({ 'heavy-widget': () => import('./HeavyWidget').then((m) => m.HeavyWidget) })
 ```
+
+- kit標準のIsland（`date-picker` / `tabs` / `toast-listener` 等）は遅延読み込みで登録され、ページに現れたものだけを読み込みます。
+- アプリが同じ名前を登録していれば、登録順に関係なくアプリの登録を使います。
+- アプリの登録どうしは **後から登録したものが勝ちます**。`registerIslandComponents()` と `registerIslandLoaders()` は同じ表を共有するため、同じ名前をどちらで登録しても前の登録を置き換えます（警告は出ません）。1つの名前はどちらか一方で1回だけ登録してください。
+- 最初の走査はentryの評価が終わった後に走るので、同じentryの中で同期的に登録すれば間に合います。登録の前に `await` がある場合はauto-mountを使わず、登録後に `islands` entryの `registerDefaultIslands()` と `startIslandAutoMount()` を呼びます。
+
+判断の背景は [ADR-0008](decisions/adr-0008-keep-unused-heavy-dependencies-out-of-consumer-bundles.md) を参照してください。
 
 認証、業務認可、Application固有endpoint、domain data取得は利用側の責務です。汎用packageへ焼き込みません。
 
