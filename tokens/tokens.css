@@ -12,6 +12,9 @@
  * ここを変更すると全プロジェクトの全画面に波及する。
  * 変更したら tokens/colors.ts と Storybook の「基礎/色」（stories/foundations/Colors.mdx）も
  * 必ず更新する。片方だけ直すと再び分裂する。
+ *
+ * DESIGN.md の `colors`（hex）はここからの生成物なので手で直さない。
+ * `just sync-design` で再生成する（`just check` が差分を検出する）。
  * </important>
  *
  * プロジェクト固有の CSS（flatpickr / tom-select / 実験場 等）はここに書かない。
@@ -34,7 +37,7 @@
   --color-foreground: oklch(0.2 0.014 285.938); /* ダークグレー文字 */
 
   /* プライマリ（青） - メインアクション */
-  --color-primary: oklch(0.623 0.214 259.815); /* Blue 600 - bg-blue-600 相当 */
+  --color-primary: oklch(0.623 0.214 259.815); /* Blue 500 - bg-blue-500 相当 */
   --color-primary-hover: oklch(0.566 0.212 262.881); /* Blue 700 */
   --color-primary-active: oklch(0.506 0.205 265.755); /* Blue 800 */
   --color-primary-foreground: oklch(1 0 0); /* 白文字 */
@@ -85,7 +88,7 @@
   /* ボーダー・入力 */
   --color-border: oklch(0.898 0.012 247.858); /* Gray 200 */
   --color-input: oklch(0.898 0.012 247.858); /* Gray 200 */
-  --color-ring: oklch(0.623 0.214 259.815); /* Blue 600 */
+  --color-ring: oklch(0.623 0.214 259.815); /* Blue 500 - primary と同値 */
 
   /* 無効状態（無彩色）
    *
@@ -124,6 +127,24 @@
   --color-status-pending-foreground: oklch(0.558 0.288 302.321); /* Purple 600 */
   --color-status-neutral: oklch(0.968 0.007 247.896); /* Gray 100 - 終了・無効・アーカイブ */
   --color-status-neutral-foreground: oklch(0.554 0.013 258.071); /* Gray 500 */
+
+  /* ナビゲーションのアクセント色（NavItem の activeColor と 1:1）
+   *
+   * サイドバーの区画を色で見分けるためだけの装飾色。操作の色（primary 等）でも
+   * 業務状態の色（status-*）でもないので Token を分けてある。
+   * NavItem はこの 1 色から文字・指標の面（/10）・枠と件数バッジ（/20）を作る。
+   * `primary` も activeColor の 1 つなので、ここには残り 6 色だけを置く。
+   *
+   * <important>
+   * 意味を持たせない。「青は申請、緑は承認」のような対応はアプリ側の都合であり、
+   * 意味のある状態表現は status-* と Badge の tone を使う。
+   * </important> */
+  --color-nav-blue: oklch(0.546 0.245 262.881); /* Blue 600 */
+  --color-nav-indigo: oklch(0.511 0.262 276.966); /* Indigo 600 */
+  --color-nav-teal: oklch(0.6 0.118 184.704); /* Teal 600 */
+  --color-nav-amber: oklch(0.666 0.179 58.318); /* Amber 600 */
+  --color-nav-rose: oklch(0.586 0.253 17.585); /* Rose 600 */
+  --color-nav-emerald: oklch(0.596 0.145 163.225); /* Emerald 600 */
 }
 
 /* ==========================================================================
@@ -193,6 +214,15 @@
   --color-status-pending-foreground: oklch(0.714 0.203 305.504); /* Purple 400 */
   --color-status-neutral: oklch(0.31 0.014 285.938); /* Gray 800 相当 */
   --color-status-neutral-foreground: oklch(0.72 0.013 258.071); /* Gray 400 */
+
+  /* ナビゲーションのアクセント色は暗い地の上で読めるよう 1 段明るくする
+   * （status-*-foreground と同じ扱い。色相は変えない）。 */
+  --color-nav-blue: oklch(0.707 0.165 254.624); /* Blue 400 */
+  --color-nav-indigo: oklch(0.673 0.182 276.935); /* Indigo 400 */
+  --color-nav-teal: oklch(0.777 0.152 181.912); /* Teal 400 */
+  --color-nav-amber: oklch(0.828 0.189 84.429); /* Amber 400 */
+  --color-nav-rose: oklch(0.712 0.194 13.428); /* Rose 400 */
+  --color-nav-emerald: oklch(0.765 0.177 163.223); /* Emerald 400 */
 
   /* primary / success / danger / warning / info の色相は変えない。
    * 意味と色の対応を light/dark で揃えるため（Storybook「基礎/色」の原則）。 */

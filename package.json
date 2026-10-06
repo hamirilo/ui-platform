@@ -15,6 +15,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "sync:design": "bun run scripts/sync-design-md.ts",
+    "check:design": "bun run scripts/sync-design-md.ts --check",
     "lint": "bunx --bun @biomejs/biome@1.9.4 check .",
     "verify:package": "bash ./scripts/verify-package.sh",
     "format": "bunx --bun @biomejs/biome@1.9.4 check --write ."

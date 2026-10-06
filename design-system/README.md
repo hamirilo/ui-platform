@@ -57,6 +57,7 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | `accent` / `accent-foreground` | hover 等の弱い強調 |
 | `border` / `input` / `ring` | 枠線・入力枠・フォーカスリング |
 | `status-{new,active,done,warning,danger,pending,neutral}` (+ `-foreground`) | 業務状態（未対応・対応中・完了…）。Badge の tone とテンプレートの `.badge-{tone}` が引く |
+| `nav-{blue,indigo,teal,amber,rose,emerald}` | ナビゲーションの区画を見分けるための装飾色。NavItem の `activeColor` と 1:1（`primary` も選べる）。意味は持たせない |
 
 - 既存 Token で表現できる場合は新しい Token を増やさない
 - アプリごとのブランド差分は、利用側 CSS の `@theme` 上書きで表現する（部品は変更しない）
