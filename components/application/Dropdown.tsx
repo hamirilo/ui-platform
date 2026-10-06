@@ -114,8 +114,11 @@ export const Dropdown = ({ trigger, items, label, align = "end" }: DropdownProps
         disabled={item.disabled}
         onClick={item.onSelect}
         className={cn(
+          /* danger は status-danger の組を引く。この系統だけが light / dark の
+           * 両方で「淡い面 + 読める濃い文字」になるよう Token 側で反転している
+           * （--color-danger は反転しないため、暗い地で文字が沈む）。 */
           item.danger &&
-            "text-red-600 dark:text-red-400 data-highlighted:bg-red-50 dark:data-highlighted:bg-red-950/50 data-highlighted:text-red-600 dark:data-highlighted:text-red-400",
+            "text-status-danger-foreground data-highlighted:bg-status-danger data-highlighted:text-status-danger-foreground",
         )}
       >
         {item.icon}

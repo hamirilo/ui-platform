@@ -14,7 +14,7 @@ describe("AnimatedNavItem", () => {
     // 静的な背景は描かない
     expect(container.querySelector('[data-slot="nav-item-indicator"]')).toBeNull();
     const motionIndicator = link.querySelector('div[aria-hidden="true"]');
-    expect(motionIndicator?.className).toContain("bg-rose-600/10");
+    expect(motionIndicator?.className).toContain("bg-nav-rose/10");
   });
 
   it("layoutId を DOM 属性へ漏らさない", () => {

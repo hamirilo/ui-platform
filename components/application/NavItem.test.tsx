@@ -44,7 +44,7 @@ describe("NavItem", () => {
     expect(el).not.toBeNull();
     expect(el?.tagName).toBe("SPAN");
     expect(el?.getAttribute("aria-hidden")).toBe("true");
-    expect(el?.className).toContain("bg-teal-600/10");
+    expect(el?.className).toContain("bg-nav-teal/10");
     // 既定色の class は tailwind-merge で置き換わり、残らない
     expect(el?.className).not.toContain("bg-primary/10");
 
