@@ -5,6 +5,10 @@ import {
   Badge,
   type BadgeTone,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Checkbox,
   Dropdown,
   PageSection,
@@ -533,5 +537,30 @@ export const Plain: Story = {
         caption="最近の申請"
       />
     </PageSection>
+  ),
+};
+
+/**
+ * 枠なし + 固定ヘッダを Card の中に置く。ヘッダの背景は置かれた面の色になる
+ * （Card が `--table-surface` を設定する）。ダークモードでは地と Card の色が違うので、そこで確かめる。
+ */
+export const PlainStickyInCard: Story = {
+  render: () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>申請の一覧</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table<Request>
+          variant="plain"
+          columns={COLUMNS}
+          rows={[...ROWS, ...ROWS, ...ROWS].map((r, i) => ({ ...r, id: i + 1, code: `SYS-2026-${String(i + 1).padStart(4, "0")}` }))}
+          rowKey={(r) => r.id}
+          stickyHeader
+          maxHeight={240}
+          caption="申請の一覧（Card の中の枠なし・固定ヘッダ）"
+        />
+      </CardContent>
+    </Card>
   ),
 };

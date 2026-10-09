@@ -409,6 +409,7 @@
     @apply flex flex-col border border-border bg-card text-card-foreground shadow-sm;
     padding: var(--card-optical);
     border-radius: var(--card-optical);
+    --table-surface: var(--color-card); /* 中の枠なし表の固定ヘッダーを面の色に合わせる */
   }
 
   .cn-card[data-size="sm"] {
@@ -1864,17 +1865,18 @@
     @apply text-4xl;
   }
 
-  /* 枠なしで横に並べる。区切り線を全高に引くため stretch にし、中身は下に揃える */
+  /* 枠なしで横に並べる。区切り線を全高に引くため stretch にし、中身は下に揃える。
+   *
+   * 区切り線はすべての Stat の左に引き、行頭の線だけを容器の外へ押し出して隠す
+   * （容器を -ml-6、各 Stat を -ml-px にし、容器の overflow で切る）。
+   * 隣接セレクタで 2 つ目以降に線を引くと、折り返した行の先頭にも線が残る。 */
   .cn-stat-group {
-    @apply flex flex-wrap items-stretch gap-x-6 gap-y-4;
+    @apply -ml-6 flex flex-wrap items-stretch gap-x-6 gap-y-4 overflow-hidden;
   }
 
   .cn-stat-group > .cn-stat {
-    @apply justify-end rounded-none border-0 bg-transparent p-0;
-  }
-
-  .cn-stat-group > .cn-stat + .cn-stat {
-    @apply border-l pl-6;
+    @apply -ml-px justify-end rounded-none bg-transparent py-0 pr-0 pl-6;
+    border-width: 0 0 0 1px;
     border-color: var(--color-border);
   }
 
@@ -1884,6 +1886,7 @@
 
   .cn-accordion {
     @apply rounded-lg border border-border bg-card;
+    --table-surface: var(--color-card);
   }
 
   .cn-accordion-item {
@@ -2102,8 +2105,10 @@
   .cn-table-container-plain .cn-table-header tr {
     background-color: transparent;
   }
+  /* 固定ヘッダーは下の行を隠すため不透明にする。色は置かれた面に合わせる
+   * （Card 等の面が --table-surface を自分の背景色にする。未設定ならページの地）。 */
   .cn-table-container-plain.cn-table-container-sticky .cn-table-header th {
-    background-color: var(--color-background);
+    background-color: var(--table-surface, var(--color-background));
   }
 
   .cn-table-container-sticky {
