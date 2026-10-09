@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.8.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.7.0...application-ui-kit-v7.8.0) (2026-10-09)
+
+
+### Features
+
+* PageSection を追加し、Stat と Table に枠なしの表示を足す (ADR-0009) ([#89](https://github.com/hamirilo/ui-platform/issues/89)) ([78d1d8b](https://github.com/hamirilo/ui-platform/commit/78d1d8b6d3621ae227792ee1716d92e6b38bd404))
+
 ## [7.7.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.6.0...application-ui-kit-v7.7.0) (2026-10-06)
 
 
