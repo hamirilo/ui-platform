@@ -52,7 +52,7 @@ Application UI Standard §7 の **Standard App** を、このキットの部品�
 
 ## アプリ要件で変えてよいもの
 
-- Content 幅、Grid / Card 構成、Filter Bar、Dashboard Widget や情報密度
+- Content 幅、Grid の列構成、Filter Bar、Dashboard Widget や情報密度
 
 ## 注意事項
 
