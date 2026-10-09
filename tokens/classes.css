@@ -484,6 +484,56 @@
   }
 
   /* ========================================
+   * MARK: Page Section — React の <PageSection> と 1:1
+   *
+   * <section class="page-section" aria-labelledby="sec-channel">
+   *   <div class="page-section-header">
+   *     <div>
+   *       <h2 class="page-section-title" id="sec-channel">チャネル別</h2>
+   *       <p class="page-section-description">クリックの多い順</p>
+   *     </div>
+   *     <div class="page-section-actions">…</div>
+   *   </div>
+   *   …本文…
+   * </section>
+   *
+   * 面を持たない節。まとまりは Card ではなく見出しと余白で作る（decisions/adr-0009）。
+   * data-divider を付けると上端に区切り線を引く。
+   * `.section` は利用側が別の意味で使っているため、page-header と対の名前にしている。
+   * ======================================== */
+
+  .page-section {
+    @apply min-w-0;
+  }
+
+  .page-section + .page-section {
+    @apply mt-6;
+  }
+
+  .page-section[data-divider] {
+    @apply border-t pt-6;
+    border-color: var(--color-border);
+  }
+
+  .page-section-header {
+    @apply mb-3 flex flex-wrap items-start justify-between gap-3;
+  }
+
+  .page-section-title {
+    @apply text-base font-semibold leading-snug;
+    color: var(--color-foreground);
+  }
+
+  .page-section-description {
+    @apply mt-0.5 text-sm;
+    color: var(--color-muted-foreground);
+  }
+
+  .page-section-actions {
+    @apply flex shrink-0 flex-wrap items-center gap-2;
+  }
+
+  /* ========================================
    * MARK: Stat — React の <Stat> と 1:1（KPI・統計タイル）
    *
    * <div class="stat">
@@ -538,6 +588,31 @@
   .stat-hint {
     @apply text-xs;
     color: var(--color-muted-foreground);
+  }
+
+  /* 主指標（React の size="lg"）。1 画面に 1 つ */
+  .stat-lg .stat-value {
+    @apply text-4xl;
+  }
+
+  /* 枠なしで横に並べる（React の <StatGroup>）
+   *
+   * <div class="stat-group">
+   *   <div class="stat stat-lg">…</div>
+   *   <div class="stat">…</div>
+   * </div>
+   */
+  .stat-group {
+    @apply flex flex-wrap items-stretch gap-x-6 gap-y-4;
+  }
+
+  .stat-group > .stat {
+    @apply justify-end rounded-none border-0 bg-transparent p-0;
+  }
+
+  .stat-group > .stat + .stat {
+    @apply border-l pl-6;
+    border-color: var(--color-border);
   }
 
   /* ========================================

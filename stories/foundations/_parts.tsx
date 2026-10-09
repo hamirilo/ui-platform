@@ -179,8 +179,9 @@ export function ClassSample({
   return (
     <div className="sb-unstyled my-4 overflow-hidden rounded-xl border border-border">
       <div className="flex flex-wrap items-center gap-3 bg-background p-4">
-        {/* sample は仕様書に直接書かれた固定文字列。外部入力ではない */}
-        <div dangerouslySetInnerHTML={{ __html: sample }} />
+        {/* sample は仕様書に直接書かれた固定文字列。外部入力ではない。
+         * w-full: 中身に合わせて縮むと、width: 100% を指定した見本（page-header 等）が広がらない */}
+        <div className="w-full" dangerouslySetInnerHTML={{ __html: sample }} />
       </div>
       <pre className="overflow-x-auto border-t border-border bg-muted p-3 text-xs leading-relaxed text-foreground">
         <code>{sample}</code>

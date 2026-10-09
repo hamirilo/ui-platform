@@ -1771,6 +1771,46 @@
   }
 
   /* ========================================================================
+   * MARK: PageSection — classes.css の .page-section と同じ形状
+   *   面を持たない節。まとまりは見出しと余白で作る（decisions/adr-0009）。
+   * ====================================================================== */
+
+  .cn-page-section {
+    @apply min-w-0;
+  }
+
+  .cn-page-section + .cn-page-section {
+    @apply mt-6;
+  }
+
+  .cn-page-section[data-divider] {
+    @apply border-t pt-6;
+    border-color: var(--color-border);
+  }
+
+  .cn-page-section-header {
+    @apply mb-3 flex flex-wrap items-start justify-between gap-3;
+  }
+
+  .cn-page-section-heading {
+    @apply min-w-0;
+  }
+
+  .cn-page-section-title {
+    @apply text-base font-semibold leading-snug;
+    color: var(--color-foreground);
+  }
+
+  .cn-page-section-description {
+    @apply mt-0.5 text-sm;
+    color: var(--color-muted-foreground);
+  }
+
+  .cn-page-section-actions {
+    @apply flex shrink-0 flex-wrap items-center gap-2;
+  }
+
+  /* ========================================================================
    * MARK: Stat — classes.css の .stat と同じ形状
    * ====================================================================== */
 
@@ -1817,6 +1857,25 @@
   .cn-stat-hint {
     @apply text-xs;
     color: var(--color-muted-foreground);
+  }
+
+  /* 主指標。1 画面に 1 つ。主役は大きさで示し、枠や色は足さない */
+  .cn-stat[data-size="lg"] .cn-stat-value {
+    @apply text-4xl;
+  }
+
+  /* 枠なしで横に並べる。区切り線を全高に引くため stretch にし、中身は下に揃える */
+  .cn-stat-group {
+    @apply flex flex-wrap items-stretch gap-x-6 gap-y-4;
+  }
+
+  .cn-stat-group > .cn-stat {
+    @apply justify-end rounded-none border-0 bg-transparent p-0;
+  }
+
+  .cn-stat-group > .cn-stat + .cn-stat {
+    @apply border-l pl-6;
+    border-color: var(--color-border);
   }
 
   /* ========================================================================
@@ -2033,6 +2092,18 @@
   }
   .cn-table-sort-idle {
     @apply opacity-50;
+  }
+
+  /* 枠を持たない表。ページの地や PageSection・Card の中に置く（decisions/adr-0009）。
+   * テンプレート側の .data-table と同じく、ヘッダーに面を付けず下線だけで区切る。 */
+  .cn-table-container-plain {
+    @apply rounded-none border-0 bg-transparent;
+  }
+  .cn-table-container-plain .cn-table-header tr {
+    background-color: transparent;
+  }
+  .cn-table-container-plain.cn-table-container-sticky .cn-table-header th {
+    background-color: var(--color-background);
   }
 
   .cn-table-container-sticky {

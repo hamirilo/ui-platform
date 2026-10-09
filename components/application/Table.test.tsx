@@ -175,4 +175,20 @@ describe("Table", () => {
     expect(wrapper.className).toContain("cn-table-container-sticky");
     expect(wrapper.style.maxHeight).toBe("200px");
   });
+
+  it("既定は枠つき（framed）で、plain クラスを付けない", () => {
+    const { container } = render(<Table<Row> columns={COLUMNS} rows={ROWS} />);
+    const wrapper = container.querySelector('[data-slot="table-container"]') as HTMLElement;
+    expect(wrapper.className).toContain("cn-table-container");
+    expect(wrapper.className).not.toContain("cn-table-container-plain");
+  });
+
+  it('variant="plain" は容器に枠なしのクラスを付け、stickyHeader と併用できる', () => {
+    const { container } = render(
+      <Table<Row> columns={COLUMNS} rows={ROWS} variant="plain" stickyHeader maxHeight={200} />,
+    );
+    const wrapper = container.querySelector('[data-slot="table-container"]') as HTMLElement;
+    expect(wrapper.className).toContain("cn-table-container-plain");
+    expect(wrapper.className).toContain("cn-table-container-sticky");
+  });
 });
