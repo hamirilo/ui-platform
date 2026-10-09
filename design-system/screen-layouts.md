@@ -56,7 +56,10 @@
 **強く揃える:** Header の基本位置、User Menu の位置、Standard App の Sidebar の役割と位置、
 Page Header の役割、Primary Action の基本配置。
 
-**アプリ要件で変えてよい:** Content 幅、Grid / Card 構成、Filter Bar・Tabs・Toolbar、
+**アプリ要件で変えてよい:** Content 幅、Grid の列構成、Filter Bar・Tabs・Toolbar、
 補助 Panel / Inspector、Dashboard Widget や情報密度。
 
 3 レイアウトで足りない場合も、まず最も近いレイアウトを拡張する。
+
+どのレイアウトでも、Main Content の中のまとまりは見出しと余白で作り、カードは「もの」を並べるときだけ使う
+（[README §1「面の階層と強調」](README.md)、[ADR-0009](../decisions/adr-0009-surface-hierarchy-and-emphasis.md)）。
