@@ -409,6 +409,7 @@
     @apply flex flex-col border border-border bg-card text-card-foreground shadow-sm;
     padding: var(--card-optical);
     border-radius: var(--card-optical);
+    --table-surface: var(--color-card); /* 中の枠なし表の固定ヘッダーを面の色に合わせる */
   }
 
   .cn-card[data-size="sm"] {
@@ -1771,6 +1772,46 @@
   }
 
   /* ========================================================================
+   * MARK: PageSection — classes.css の .page-section と同じ形状
+   *   面を持たない節。まとまりは見出しと余白で作る（decisions/adr-0009）。
+   * ====================================================================== */
+
+  .cn-page-section {
+    @apply min-w-0;
+  }
+
+  .cn-page-section + .cn-page-section {
+    @apply mt-6;
+  }
+
+  .cn-page-section[data-divider] {
+    @apply border-t pt-6;
+    border-color: var(--color-border);
+  }
+
+  .cn-page-section-header {
+    @apply mb-3 flex flex-wrap items-start justify-between gap-3;
+  }
+
+  .cn-page-section-heading {
+    @apply min-w-0;
+  }
+
+  .cn-page-section-title {
+    @apply text-base font-semibold leading-snug;
+    color: var(--color-foreground);
+  }
+
+  .cn-page-section-description {
+    @apply mt-0.5 text-sm;
+    color: var(--color-muted-foreground);
+  }
+
+  .cn-page-section-actions {
+    @apply flex shrink-0 flex-wrap items-center gap-2;
+  }
+
+  /* ========================================================================
    * MARK: Stat — classes.css の .stat と同じ形状
    * ====================================================================== */
 
@@ -1819,12 +1860,33 @@
     color: var(--color-muted-foreground);
   }
 
+  /* 主指標。1 画面に 1 つ。主役は大きさで示し、枠や色は足さない */
+  .cn-stat[data-size="lg"] .cn-stat-value {
+    @apply text-4xl;
+  }
+
+  /* 枠なしで横に並べる。区切り線を全高に引くため stretch にし、中身は下に揃える。
+   *
+   * 区切り線はすべての Stat の左に引き、行頭の線だけを容器の外へ押し出して隠す
+   * （容器を -ml-6、各 Stat を -ml-px にし、容器の overflow で切る）。
+   * 隣接セレクタで 2 つ目以降に線を引くと、折り返した行の先頭にも線が残る。 */
+  .cn-stat-group {
+    @apply -ml-6 flex flex-wrap items-stretch gap-x-6 gap-y-4 overflow-hidden;
+  }
+
+  .cn-stat-group > .cn-stat {
+    @apply -ml-px justify-end rounded-none bg-transparent py-0 pr-0 pl-6;
+    border-width: 0 0 0 1px;
+    border-color: var(--color-border);
+  }
+
   /* ========================================================================
    * MARK: Accordion / Collapsible — classes.css の .disclosure と同じ形状
    * ====================================================================== */
 
   .cn-accordion {
     @apply rounded-lg border border-border bg-card;
+    --table-surface: var(--color-card);
   }
 
   .cn-accordion-item {
@@ -2033,6 +2095,20 @@
   }
   .cn-table-sort-idle {
     @apply opacity-50;
+  }
+
+  /* 枠を持たない表。ページの地や PageSection・Card の中に置く（decisions/adr-0009）。
+   * テンプレート側の .data-table と同じく、ヘッダーに面を付けず下線だけで区切る。 */
+  .cn-table-container-plain {
+    @apply rounded-none border-0 bg-transparent;
+  }
+  .cn-table-container-plain .cn-table-header tr {
+    background-color: transparent;
+  }
+  /* 固定ヘッダーは下の行を隠すため不透明にする。色は置かれた面に合わせる
+   * （Card 等の面が --table-surface を自分の背景色にする。未設定ならページの地）。 */
+  .cn-table-container-plain.cn-table-container-sticky .cn-table-header th {
+    background-color: var(--table-surface, var(--color-background));
   }
 
   .cn-table-container-sticky {

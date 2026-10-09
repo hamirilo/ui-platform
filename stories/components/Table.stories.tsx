@@ -5,8 +5,13 @@ import {
   Badge,
   type BadgeTone,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Checkbox,
   Dropdown,
+  PageSection,
   Table,
   type TableColumn,
   type TableSort,
@@ -122,7 +127,17 @@ const meta = {
 | ソート・ページング・絞り込みの実装 | **Table は持たない。** 業務ロジックなのでアプリ側で実装し、結果を \`rows\` に渡す |
 | 数百行以上の表示 | 仮想スクロールやページングを別途検討する（Table は全行を描画する） |
 | 数値の集計・編集ができる表 | 表計算的な UI が必要。Table の範囲外 |
-| 項目が 2〜3 個で縦に読ませたい | テーブルではなく定義リスト（\`<dl>\`）やカードを使う |
+| 項目が 2〜3 個で縦に読ませたい | テーブルではなく \`DescriptionList\` を使う |
+| 1 行しかない、割合が 100% になる | 表にせず文章で書く（decisions/adr-0009） |
+
+## 枠の有無（\`variant\`）
+
+| variant | 使う場面 |
+|---|---|
+| \`framed\`（既定） | 一覧画面の主となる表など、作業領域として境界が要るとき |
+| \`plain\` | \`PageSection\` や \`Card\` の中、ページの地の上。面の中に面を作らない |
+
+テンプレート側の \`.data-table\` は \`plain\` と同じ見た目。
 
 ## Props
 
@@ -507,5 +522,45 @@ export const StickyHeader: Story = {
       maxHeight={240}
       caption="申請の一覧（固定ヘッダ）"
     />
+  ),
+};
+
+/** 枠なし。PageSection の中やページの地の上に置く。テンプレートの .data-table と同じ見た目。 */
+export const Plain: Story = {
+  render: () => (
+    <PageSection title="最近の申請" description="直近 4 件">
+      <Table<Request>
+        variant="plain"
+        columns={COLUMNS}
+        rows={ROWS}
+        rowKey={(r) => r.id}
+        caption="最近の申請"
+      />
+    </PageSection>
+  ),
+};
+
+/**
+ * 枠なし + 固定ヘッダを Card の中に置く。ヘッダの背景は置かれた面の色になる
+ * （Card が `--table-surface` を設定する）。ダークモードでは地と Card の色が違うので、そこで確かめる。
+ */
+export const PlainStickyInCard: Story = {
+  render: () => (
+    <Card>
+      <CardHeader>
+        <CardTitle>申請の一覧</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table<Request>
+          variant="plain"
+          columns={COLUMNS}
+          rows={[...ROWS, ...ROWS, ...ROWS].map((r, i) => ({ ...r, id: i + 1, code: `SYS-2026-${String(i + 1).padStart(4, "0")}` }))}
+          rowKey={(r) => r.id}
+          stickyHeader
+          maxHeight={240}
+          caption="申請の一覧（Card の中の枠なし・固定ヘッダ）"
+        />
+      </CardContent>
+    </Card>
   ),
 };

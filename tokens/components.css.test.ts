@@ -208,6 +208,11 @@ describe("tokens/components.css", () => {
       [".cn-steps", ".steps"],
       [".cn-step-marker", ".step-marker"],
       [".cn-table-container-sticky", ".data-table-scroll"],
+      [".cn-table-container-plain", ".data-table"],
+      [".cn-page-section", ".page-section"],
+      [".cn-page-section-title", ".page-section-title"],
+      [".cn-stat-group", ".stat-group"],
+      ['.cn-stat[data-size="lg"] .cn-stat-value', ".stat-lg .stat-value"],
       [".cn-input", ".input-field"],
       [".cn-rating", ".rating"],
       [".cn-rating-star-empty", ".rating-star-empty"],
@@ -218,6 +223,34 @@ describe("tokens/components.css", () => {
       expect(css.includes(`${cnSelector} {`), `${cnSelector} が無い`).toBe(true);
       expect(classesCss.includes(`${templateSelector} {`), `${templateSelector} が無い`).toBe(true);
     });
+  });
+
+  /* 隣接セレクタ（.stat + .stat）で線を引くと、折り返した行の先頭に線が残る。
+   * 全 Stat に線を引き、行頭の線を容器の overflow で切る形を React / テンプレートで揃える。 */
+  it.each([
+    [".cn-stat-group", ".cn-stat-group > .cn-stat", css],
+    [".stat-group", ".stat-group > .stat", classesCss],
+  ])("%s は行頭の区切り線を容器の外へ出して隠す", (group, item, source) => {
+    expect(ruleBody(group, source)).toMatch(/-ml-6\b.*overflow-hidden|overflow-hidden.*-ml-6\b/);
+    const body = ruleBody(item, source);
+    expect(body).toMatch(/-ml-px\b/);
+    expect(body).toMatch(/border-width:\s*0 0 0 1px/);
+    expect(source).not.toContain(`${item} + `);
+  });
+
+  /* 固定ヘッダーは不透明。色を固定すると、Card の中（ダークモードでは地と色が違う）でずれる。 */
+  it.each([
+    [".cn-table-container-plain.cn-table-container-sticky .cn-table-header th", css],
+    [".data-table-scroll .data-table thead th", classesCss],
+  ])("%s の背景は --table-surface を引く", (selector, source) => {
+    expect(ruleBody(selector, source)).toContain("var(--table-surface, var(--color-background))");
+  });
+
+  it.each([
+    [".cn-card", css],
+    [".card,\n  .card-sm,\n  .card-lg", classesCss],
+  ])("%s は --table-surface を面の色にする", (selector, source) => {
+    expect(ruleBody(selector, source)).toContain("--table-surface: var(--color-card)");
   });
 
   /* エラーの見せ方は React とテンプレートで割れやすい。片方だけ赤枠が出ないと、

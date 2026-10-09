@@ -89,7 +89,14 @@ export type {
 } from "./ButtonGroup";
 
 export { Table } from "./Table";
-export type { TableProps, TableColumn, TableSort, TableSelection, TableRowKey } from "./Table";
+export type {
+  TableProps,
+  TableColumn,
+  TableSort,
+  TableSelection,
+  TableRowKey,
+  TableVariant,
+} from "./Table";
 
 export { FormField } from "./FormField";
 export type { FormFieldProps } from "./FormField";
@@ -156,8 +163,11 @@ export type { BreadcrumbsProps, BreadcrumbItem } from "./Breadcrumbs";
 export { PageHeader } from "./PageHeader";
 export type { PageHeaderProps } from "./PageHeader";
 
-export { Stat } from "./Stat";
-export type { StatProps, StatTone } from "./Stat";
+export { PageSection } from "./PageSection";
+export type { PageSectionProps } from "./PageSection";
+
+export { Stat, StatGroup } from "./Stat";
+export type { StatProps, StatTone, StatSize, StatGroupProps } from "./Stat";
 
 export { Rating } from "./Rating";
 export type { RatingProps, RatingSize } from "./Rating";

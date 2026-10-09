@@ -67,6 +67,8 @@ export interface TableSort {
 
 export type TableRowKey = string | number;
 
+export type TableVariant = "framed" | "plain";
+
 export interface TableSelection<T> {
   /** 選択中の行の key（rowKey の戻り値） */
   selectedKeys: readonly TableRowKey[];
@@ -151,6 +153,14 @@ export interface TableProps<T> {
   /** スクロール容器の高さ（stickyHeader と組で使う。例: 480 / "60vh"） */
   maxHeight?: number | string;
 
+  /**
+   * 面の有無。"framed" は枠・角丸・背景を持つ作業面、"plain" は枠を持たずページの地や
+   * PageSection の中にそのまま置く（decisions/adr-0009）。Card の中に置くときも "plain" にする。
+   * テンプレート側の `.data-table` は "plain" と同じ見た目。
+   * @default "framed"
+   */
+  variant?: TableVariant;
+
   className?: string;
 }
 
@@ -199,6 +209,7 @@ export function Table<T>({
   selection,
   stickyHeader = false,
   maxHeight,
+  variant = "framed",
   className,
 }: TableProps<T>) {
   const isEmpty = rows.length === 0;
@@ -256,7 +267,10 @@ export function Table<T>({
   return (
     <TablePrimitive
       className={className}
-      containerClassName={cn(stickyHeader && "cn-table-container-sticky")}
+      containerClassName={cn(
+        variant === "plain" && "cn-table-container-plain",
+        stickyHeader && "cn-table-container-sticky",
+      )}
       containerStyle={maxHeight !== undefined ? { maxHeight } : undefined}
     >
       {caption && <TableCaption className="sr-only">{caption}</TableCaption>}

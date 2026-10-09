@@ -18,13 +18,15 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
   rows={[
     [<Code>btn-primary / btn-secondary / btn-success / btn-danger</Code>, <Code>Button</Code>, '操作。サイズは btn-xs / btn-sm / btn-lg'],
     [<Code>input-field</Code>, <Code>Input / Select / Textarea</Code>, 'フォーム入力'],
-    [<Code>card / card-sm / card-lg</Code>, <Code>Card</Code>, '面'],
+    [<Code>card / card-sm / card-lg</Code>, <Code>Card</Code>, '「もの」を並べるときの面。まとまりには page-section を使う'],
     [<Code>badge badge-{'{tone}'}</Code>, <Code>Badge tone</Code>, '状態表示'],
     [<Code>alert alert-{'{tone}'}</Code>, <Code>Alert</Code>, '継続して伝える注意・案内'],
     [<Code>breadcrumbs</Code>, <Code>Breadcrumbs</Code>, '現在位置'],
     [<Code>page-header</Code>, <Code>PageHeader</Code>, '画面の見出し領域'],
-    [<Code>stat</Code>, <Code>Stat</Code>, 'KPI・統計タイル'],
-    [<Code>data-table</Code>, <Code>Table</Code>, '一覧'],
+    [<Code>page-section / page-section-title / page-section-description / page-section-actions</Code>, <Code>PageSection</Code>, '面を持たない節（見出し + 余白）。data-divider で区切り線'],
+    [<Code>stat / stat-lg</Code>, <><Code>Stat</Code> / size="lg"</>, 'KPI・統計タイル。stat-lg は主指標（1 画面に 1 つ）'],
+    [<Code>stat-group</Code>, <Code>StatGroup</Code>, 'Stat を枠なし・区切り線で並べる'],
+    [<Code>data-table</Code>, <><Code>Table</Code> の variant="plain"</>, '一覧（枠なし）'],
     [<Code>tabs / tab / tab-active</Code>, <><Code>Tabs</Code> / Islands <Code>tabs</Code></>, '画面内の切替'],
     [<Code>disclosure</Code>, <><Code>Accordion / Collapsible</Code> / Islands <Code>disclosure</Code></>, '開閉（details 要素）'],
     [<Code>switch / switch-sm</Code>, <Code>Switch</Code>, '即時反映の ON / OFF（input[type=checkbox]）'],
@@ -133,6 +135,33 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
   note="主操作は右（page-header-actions）。タブを付けるときは page-header-tabs を最後に置く。"
 />
 
+## ページの節
+
+<ClassSample
+  sample={`<div style="width: 100%">
+  <section class="page-section" aria-labelledby="sec-channel">
+    <div class="page-section-header">
+      <div>
+        <h2 class="page-section-title" id="sec-channel">チャネル別</h2>
+        <p class="page-section-description">クリックの多い順</p>
+      </div>
+      <div class="page-section-actions"><a href="#" class="btn-secondary btn-sm">CSV 出力</a></div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>チャネル</th><th style="text-align: right">クリック</th></tr></thead>
+      <tbody><tr><td>Garoon</td><td style="text-align: right">52</td></tr><tr><td>メール</td><td style="text-align: right">12</td></tr></tbody>
+    </table>
+  </section>
+  <section class="page-section" data-divider aria-labelledby="sec-url">
+    <div class="page-section-header">
+      <div><h2 class="page-section-title" id="sec-url">配布用URL</h2></div>
+    </div>
+    <p>…</p>
+  </section>
+</div>`}
+  note="まとまりは card ではなく page-section で作る（decisions/adr-0009）。面を持たないので、中の data-table や stat-group はそのまま置く。続けて並ぶ節の境目は data-divider で示す。"
+/>
+
 ## 統計タイル
 
 <ClassSample
@@ -148,6 +177,20 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
   <div class="stat-hint">2026-09-01 時点</div>
 </div>`}
   note="値は intcomma / floatformat で整形して渡す。stat-delta-* は増減の色で、値には色を付けない。"
+/>
+
+<ClassSample
+  sample={`<div class="stat-group">
+  <div class="stat stat-lg">
+    <div class="stat-label">ユニーク（主指標）</div>
+    <div class="stat-value">57<span class="stat-unit">人</span></div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">総クリック</div>
+    <div class="stat-value">64</div>
+  </div>
+</div>`}
+  note="並べるときは stat-group で包む。タイルの枠が消え、区切り線で並ぶ。stat-lg は主指標 1 つだけに付ける。タイルのまま並べるのは、各値を 1 つずつ押して絞り込むときなど「もの」として扱うときだけ。"
 />
 
 ## タブ

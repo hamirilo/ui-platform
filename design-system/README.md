@@ -94,13 +94,14 @@ Django + React Islands で実装困難な構成を避ける。Django テンプ�
 | FormField / FormFieldSet | ラベル・必須表示・エラー配置の統一。単一のコントロールは FormField、ラジオ・ボタングループのようなグループ入力は FormFieldSet |
 | Dialog / ConfirmDialog / FormDialog | ダイアログ。破壊的操作の確認は ConfirmDialog（`confirm()` を使わない） |
 | toast | 補助的なフィードバック（`alert()` を使わない） |
-| Table | 一覧。空状態が必須の API |
+| Table | 一覧。空状態が必須の API。PageSection・Card の中やページの地では `variant="plain"`（枠なし） |
 | RadioTable | 表から1行を選ばせる。プラン・送付先など列で比較して決める選択 |
 | Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション。Tabs は `variant`（default / line）と `orientation`（horizontal / vertical）を持つ。NavItem のアクティブ背景を項目間で動かしたい（同じページ内で切り替える）ときだけ AnimatedNavItem（framer-motion を含む） |
 | Badge / ActiveIndicator | 状態表示 |
 | Alert | 継続して伝える注意・案内（フォーム全体のエラー、未完了の設定、権限による制限）。ページ幅のお知らせは `variant="banner"` |
 | PageHeader / Breadcrumbs | 画面の見出し領域（見出し・説明・主操作・タブ）と現在位置 |
-| Stat | KPI・統計タイル（ラベル・値・単位・増減） |
+| PageSection | 面を持たない節（見出し・説明・操作）。詳細画面・集計画面・設定画面のまとまりは Card ではなくこれで作る |
+| Stat / StatGroup | KPI・統計（ラベル・値・単位・増減）。並べるときは StatGroup で枠なしにし、主指標 1 つだけ `size="lg"` |
 | Rating | 星の評価。`onChange` を渡すと入力、渡さなければ表示専用。一覧の表示専用はテンプレートの `.rating` |
 | FileDropZone | ファイルの選択・ドロップ・事前チェック（種類・サイズ・件数）。Django の input と組むなら Islands の `file-drop-zone` |
 | Steps | 手順の進み具合（done / current / error / upcoming）。ウィザードや申請フロー |
@@ -125,13 +126,15 @@ Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / To
 |---|---|---|
 | `.btn-primary` / `.btn-secondary` / `.btn-success` / `.btn-danger`（`.btn-xs` / `.btn-sm` / `.btn-lg`） | Button | 操作 |
 | `.input-field` | Input / Select / Textarea | フォーム入力。エラーは `aria-invalid` を付けると枠が danger になる（React 側と同じ） |
-| `.card` / `.card-sm` / `.card-lg` | Card | 面 |
+| `.card` / `.card-sm` / `.card-lg` | Card | 「もの」を並べるときの面。まとまりには `.page-section` |
 | `.badge` + `.badge-{tone}` | Badge `tone` | 状態表示。`models.py` の `*_display_class` は tone クラス名を返す |
 | `.alert` + `.alert-{tone}`（`.alert-banner`） | Alert | 継続して伝える注意・案内 |
 | `.breadcrumbs` | Breadcrumbs | 現在位置 |
 | `.page-header` | PageHeader | 画面の見出し領域。主操作は `.page-header-actions` |
-| `.stat` | Stat | KPI・統計タイル |
-| `.data-table` | Table | 一覧 |
+| `.page-section`（`[data-divider]`）/ `.page-section-header` / `.page-section-title` / `.page-section-description` / `.page-section-actions` | PageSection | 面を持たない節。まとまりの既定 |
+| `.stat`（`.stat-lg`） | Stat（`size="lg"`） | KPI・統計タイル。`.stat-lg` は主指標 1 つだけ |
+| `.stat-group` | StatGroup | Stat を枠なし・区切り線で並べる |
+| `.data-table` | Table `variant="plain"` | 一覧（枠なし） |
 | `.disclosure`（`<details>`） | Accordion / Collapsible。件数の動的更新が要るなら Islands `disclosure` | 開閉 |
 | `.tabs` / `.tab` / `.tab-active` | Tabs（React の中身）/ Islands `tabs`（サーバー描画パネルの切替） | 画面内の切替 |
 | — | FileDropZone / Islands `file-drop-zone` | ファイル添付（テンプレートでは Island を使う） |

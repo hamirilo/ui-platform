@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Stat } from "./Stat";
+import { Stat, StatGroup } from "./Stat";
 
 describe("Stat", () => {
   it("ラベル・値・単位を描く", () => {
@@ -24,5 +24,33 @@ describe("Stat", () => {
     const { container } = render(<Stat label="件数" value="1" />);
     expect(container.querySelector(".cn-stat-delta")).toBeNull();
     expect(container.querySelector(".cn-stat-hint")).toBeNull();
+  });
+
+  it('size="lg" は data-size を付け、既定では付けない', () => {
+    const { container } = render(
+      <>
+        <Stat label="主指標" value="57" size="lg" />
+        <Stat label="補助" value="64" />
+      </>,
+    );
+    const [lg, normal] = Array.from(container.querySelectorAll(".cn-stat"));
+    expect(lg?.getAttribute("data-size")).toBe("lg");
+    expect(normal?.hasAttribute("data-size")).toBe(false);
+  });
+});
+
+describe("StatGroup", () => {
+  it("子の Stat を cn-stat-group の直下に並べる", () => {
+    const { container } = render(
+      <StatGroup aria-label="集計">
+        <Stat size="lg" label="ユニーク" value="57" />
+        <Stat label="総クリック" value="64" />
+      </StatGroup>,
+    );
+    const group = container.querySelector(".cn-stat-group");
+    expect(group?.getAttribute("aria-label")).toBe("集計");
+    const children = Array.from(group?.children ?? []);
+    expect(children).toHaveLength(2);
+    expect(children.every((el) => el.classList.contains("cn-stat"))).toBe(true);
   });
 });

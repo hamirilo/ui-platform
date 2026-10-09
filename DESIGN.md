@@ -247,8 +247,8 @@ Tailwind CSS の標準スペーシング（0.25rem = 4px 刻み）に準拠し�
 |---|---|---|
 | アクション | Button, ButtonGroup | variant は `primary`, `secondary`, `danger`, `success` の 4 種。 |
 | 入力 | Input, SearchInput, Select, Combobox, DatePicker | ラベル・エラーメッセージの配置には FormField / FormFieldSet を必ず組み合わせる。 |
-| データ表示 | Table, RadioTable | テーブルは必ず空状態（Empty state）ハンドリングを含む。 |
-| 構造・案内 | PageHeader, Breadcrumbs, Tabs | 画面の見出し、主操作ボタン、階層パンくずを一体で提供。 |
+| データ表示 | Table, RadioTable, Stat / StatGroup | テーブルは必ず空状態（Empty state）ハンドリングを含む。節の中では Table を `variant="plain"`、Stat は StatGroup で枠なしに並べる。 |
+| 構造・案内 | PageHeader, PageSection, Breadcrumbs, Tabs | 画面の見出し、主操作ボタン、階層パンくずを一体で提供。まとまりは PageSection（面を持たない節）で作る。 |
 | 状態・通知 | Badge, ActiveIndicator, Alert, Toast | 一時的な通知は Toast、持続的な案内は Alert、状態表現は Badge（tone を指定）。 |
 | 対話 | ConfirmDialog, FormDialog | 破壊的操作の確認には `window.confirm` を使わず ConfirmDialog を使用。 |
 

@@ -26,6 +26,7 @@ import {
   Input,
   NavItem,
   PageHeader,
+  PageSection,
   Pagination,
   RadioGroup,
   SearchInput,
@@ -428,6 +429,11 @@ export const AllComponents: Story = {
                 }
                 className="mb-0"
               />
+            </Labeled>
+            <Labeled label="PageSection">
+              <PageSection title="申請内容" description="面を持たない節。まとまりは見出しと余白で作る">
+                <p className="text-sm">本文</p>
+              </PageSection>
             </Labeled>
             <Labeled label="Breadcrumbs">
               <Breadcrumbs
