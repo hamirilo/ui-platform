@@ -9,6 +9,7 @@ import {
   Pagination,
   Select,
   Stat,
+  StatGroup,
   Table,
   type TableColumn,
   type TableSort,
@@ -40,7 +41,7 @@ Application UI Standard §7 の **Standard App** を、このキットの部品�
 +----------+---------------------------------------------------+
 | Sidebar  | PageHeader: [見出し]              [Primary Action] |
 | (NavItem)+---------------------------------------------------+
-|          | Stat 行 → 絞り込み → Table → Pagination            |
+|          | 件数（StatGroup）→ 絞り込み → Table → Pagination   |
 +----------+---------------------------------------------------+
 \`\`\`
 
@@ -53,6 +54,12 @@ Application UI Standard §7 の **Standard App** を、このキットの部品�
 ## アプリ要件で変えてよいもの
 
 - Content 幅、Grid の列構成、Filter Bar、Dashboard Widget や情報密度
+
+## 面と主役（decisions/adr-0009）
+
+- この画面の主役は一覧。Table は作業面として枠を持つ。件数は StatGroup で枠なしに並べ、Table より目立たせない
+- 件数を 1 つずつ押して一覧を絞り込むなら、Stat はタイルのまま並べてよい（各値が操作の対象＝「もの」になるため）
+- 期限超過などの警告は \`tone\` で示す。主役の数には数えない
 
 ## 注意事項
 
@@ -85,7 +92,7 @@ const NAV = [
   { label: "設定", href: "#settings", icon: <Settings className="mr-2 size-4" /> },
 ];
 
-/** 一覧画面。Stat 行 + 絞り込み + Table + Pagination。 */
+/** 一覧画面。件数（StatGroup）+ 絞り込み + Table + Pagination。 */
 export const ListScreen: Story = {
   render: () => {
     const [sort, setSort] = React.useState<TableSort | null>({ key: "code", direction: "asc" });
@@ -109,12 +116,12 @@ export const ListScreen: Story = {
             </Button>
           }
         />
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatGroup className="mb-6" aria-label="対応状況">
           <Stat label="未対応" value="12" unit="件" delta="+3 前週比" tone="negative" />
           <Stat label="対応中" value="38" unit="件" delta="±0" tone="neutral" />
           <Stat label="今月の完了" value="27" unit="件" delta="+9 前月比" tone="positive" />
           <Stat label="期限超過" value="4" unit="件" delta="要確認" tone="warning" />
-        </div>
+        </StatGroup>
         <div className="mb-3 flex flex-wrap items-end gap-3">
           <Input placeholder="件名・申請番号で検索" aria-label="検索" className="max-w-xs" />
           <Select
