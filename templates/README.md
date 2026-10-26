@@ -32,12 +32,17 @@ Templateは完成した業務画面のコピー元ではなく、構成・余白
 
 | Story | 内容 | 版 |
 |---|---|---|
-| 標準アプリ（Standard App） | Global Header + 左Sidebar（NavItem）+ PageHeader + Stat行 + Table（並び替え・選択）+ Pagination | React |
+| 標準アプリ（Standard App） | Global Header + 左Sidebar（NavItem）+ PageHeader + 件数（StatGroup）+ Table（並び替え・選択）+ Pagination | React |
 | シンプルアプリ（Simple App） | Header + 中心に構成したフォーム（パターン/フォームの決めごと） | React |
 | フォーカスアプリ（Focus App） | Minimal Header（ButtonGroupのToolbar）+ Main Workspace | React |
 | 一覧画面（テンプレート版） | page-header → filter-bar（hx-get）→ data-table（th[aria-sort]）→ pagination。**React部品を使わずテンプレート用クラスだけ**で組み、Djangoテンプレートへコピーできる形 | テンプレート |
-| 詳細画面 | PageHeader（パンくず・状態・主操作・タブ）+ Alert + Steps + DescriptionList + Accordion | React |
+| 詳細画面 | PageHeader（パンくず・状態・主操作・タブ）+ Alert + PageSection の節（Steps・DescriptionList）+ Accordion + 脇の参考値（StatGroup） | React |
+| 集計画面 | PageHeader + 主指標（StatGroup、`size="lg"` は 1 つ）+ PageSection の節（枠なし Table・切り口別の内訳・1 行の内訳は文章・配布物の Item） | React |
 | エラーページ | 404 / 403 / 500（Empty + Button）と、404のテンプレート版 | React + テンプレート |
+
+どのTemplateも、まとまりは Card ではなく PageSection（見出し + 余白 + 区切り線）で作り、
+主役は 1 画面に 1 つにする（[decisions/adr-0009](../decisions/adr-0009-surface-hierarchy-and-emphasis.md)）。
+集計画面は、利用側で「カードだらけで何が重要か分からない」と指摘された画面を一般化して追加した。
 
 ### 「React版」と「テンプレート版」の使い分け
 
