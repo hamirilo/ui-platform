@@ -42,7 +42,7 @@ export interface AlertProps extends Omit<React.ComponentPropsWithoutRef<"div">, 
   /**
    * 表示形
    * - inline: 画面内の一区画に置く（既定）
-   * - banner: ページ幅いっぱいのお知らせ・環境バナー。角丸と左罫線を外す
+   * - banner: ページ幅いっぱいのお知らせ・環境バナー。角丸と左右の枠を外す
    * @default "inline"
    */
   variant?: AlertVariant;

@@ -28,6 +28,7 @@ Claude Design 等の AI や人間が**画面をデザインするとき**に渡�
 - 過剰な Card 分割
 - 大きすぎる見出しや余白
 - 意味のない Gradient、強い Shadow、過度な角丸
+- 角丸の面（Alert・Card・パネル）に色付きの左ボーダーで状態・カテゴリを示す表現。面の色・アイコン・タイトル下の罫線・Badge で示す（Storybook「基礎/角丸と影」）
 - 装飾だけを目的とした色や Animation
 - 業務画面に適さない Landing Page 風の表現
 

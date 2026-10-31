@@ -320,7 +320,10 @@
    *   <button type="button" class="alert-dismiss" aria-label="閉じる">…</button>
    * </div>
    *
-   * ページ幅のお知らせ・環境バナーは .alert-banner を足す（角丸と左罫線を外し上下罫線に）。
+   * tone は淡い面・同系の枠・アイコン・見出しの色で示す。角丸の面に色付きの左罫線は付けない
+   * （基礎/角丸と影「角丸の面に左罫線を付けない」）。
+   *
+   * ページ幅のお知らせ・環境バナーは .alert-banner を足す（角丸と左右の枠を外し上下罫線に）。
    * ======================================== */
 
   .alert {
@@ -330,7 +333,6 @@
     color: var(--color-foreground);
     background-color: color-mix(in oklab, var(--alert-color) 12%, var(--color-card));
     border: 1px solid color-mix(in oklab, var(--alert-color) 35%, var(--color-card));
-    border-left: 4px solid var(--alert-color);
   }
 
   .alert > svg {

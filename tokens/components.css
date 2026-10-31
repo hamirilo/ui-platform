@@ -1609,8 +1609,8 @@
    * MARK: Alert — classes.css の .alert と同じ形状
    *
    * 上流（nova）の grid レイアウトは使わず、テンプレート用 .alert と同じ
-   * flex + 左罫線 + 淡い面にしてある。色は --alert-color / --alert-foreground の
-   * 2 変数に集約し、tone クラスはその差し替えだけを行う。
+   * flex + 淡い面 + 同系の枠にしてある。角丸の面なので色付きの左罫線は付けない。
+   * 色は --alert-color / --alert-foreground の 2 変数に集約し、tone クラスはその差し替えだけを行う。
    * ====================================================================== */
 
   .cn-alert {
@@ -1620,7 +1620,6 @@
     color: var(--color-foreground);
     background-color: color-mix(in oklab, var(--alert-color) 12%, var(--color-card));
     border: 1px solid color-mix(in oklab, var(--alert-color) 35%, var(--color-card));
-    border-left: 4px solid var(--alert-color);
   }
   .cn-alert > svg {
     @apply mt-0.5 shrink-0;
