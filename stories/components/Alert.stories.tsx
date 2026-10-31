@@ -114,7 +114,7 @@ export const Overview: Story = {
         </Stack>
       </Section>
 
-      <Section title="バナー" note="ページ幅のお知らせ。角丸と左罫線を外し、上下の罫線だけにする。">
+      <Section title="バナー" note="ページ幅のお知らせ。角丸と左右の枠を外し、上下の罫線だけにする。">
         <Alert variant="banner" tone="warning" title="9/10 21:00〜22:00 はメンテナンスのため利用できません" />
       </Section>
     </Showcase>

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -297,5 +297,35 @@ describe("tokens/components.css", () => {
         /padding-block:\s*calc\(var\(--spacing\) \* 3\.5 - \(1lh - 1em\) \/ 2\)/,
       );
     });
+  });
+});
+
+describe("角丸の面に左罫線を付けない（基礎/角丸と影）", () => {
+  /* 太い左罫線は角丸の弧を切って角を濁らせる。状態・カテゴリは面の色・アイコン・
+   * タイトル下の罫線・Badge で示す。外す方向（border-left: 0）だけを許す。 */
+  it.each([
+    ["tokens/classes.css", classesCss],
+    ["tokens/components.css", css],
+  ])("%s は border-left / border-inline-start で線を引かない", (_file, source) => {
+    expect(source).not.toMatch(/border-(left|inline-start)(-width)?:\s*(?![\s0])/);
+  });
+
+  it.each([
+    ["tokens/classes.css", classesCss],
+    ["tokens/components.css", css],
+  ])("%s は border-l-* / border-s-* で太い線を引かない", (_file, source) => {
+    expect(source).not.toMatch(/\bborder-[ls]-([2-9]|\[)/);
+  });
+
+  it("components/ の .tsx は border-l-* / border-s-* で太い線を引かない", () => {
+    const files = readdirSync(join(process.cwd(), "components"), { recursive: true })
+      .map(String)
+      .filter((file) => file.endsWith(".tsx"));
+    const offenders = files.filter((file) =>
+      /\bborder-[ls]-([2-9]|\[)/.test(
+        readFileSync(join(process.cwd(), "components", file), "utf-8"),
+      ),
+    );
+    expect(offenders).toEqual([]);
   });
 });
