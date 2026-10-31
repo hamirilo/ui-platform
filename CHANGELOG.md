@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.8.1](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.8.0...application-ui-kit-v7.8.1) (2026-10-31)
+
+
+### Bug Fixes
+
+* **components:** 角丸の面に色付きの左罫線を付けない ([#93](https://github.com/hamirilo/ui-platform/issues/93)) ([044744b](https://github.com/hamirilo/ui-platform/commit/044744bb1c188f115b16c1afc486b8a448493cb8))
+
 ## [7.8.0](https://github.com/hamirilo/ui-platform/compare/application-ui-kit-v7.7.0...application-ui-kit-v7.8.0) (2026-10-14)
 
 
