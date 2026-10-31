@@ -444,6 +444,40 @@
     @apply mt-4 flex items-center justify-end gap-2 border-t border-border pt-3;
   }
 
+  /* タイトル行の下の罫線（Card の titleRule）。カテゴリ・状態の色は左罫線ではなくここで示す。
+   * 左右へ余白（--card-optical）の分だけ負のマージンを取り、カード幅いっぱいに引く。
+   * 余白の値を固定で書くと、size で余白が変わったときに端が合わなくなる。
+   * テンプレート側の .card-title-rule と同じ。 */
+  .cn-card-header:has(+ .cn-card-title-rule) {
+    margin-bottom: 0;
+  }
+
+  .cn-card-title-rule {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 0.625rem calc(-1 * var(--card-optical)) 0.75rem;
+    background-color: var(--color-border);
+  }
+
+  .cn-card-title-rule[data-variant="accent"] {
+    height: 2px;
+    background-color: var(--card-rule-color, var(--color-primary));
+  }
+
+  /* フッターを muted の帯にする（Card の footerVariant="band"）。下と左右の余白を打ち消し、
+   * カードの縁まで広げる。角丸からはみ出さないよう、このときだけ面を overflow: hidden にする
+   * （常に付けると、中の position: sticky や縁に掛かるフォーカスリングまで切ってしまう）。
+   * テンプレート側の .card-footer-band と同じ。 */
+  .cn-card:has(> .cn-card-footer-band) {
+    overflow: hidden;
+  }
+
+  .cn-card-footer-band {
+    @apply justify-start border-t border-border bg-muted text-xs text-muted-foreground;
+    margin: 0.75rem calc(-1 * var(--card-optical)) calc(-1 * var(--card-optical));
+    padding: 0.625rem var(--card-optical);
+  }
+
   /* ========================================================================
    * MARK: Input / Textarea — theme.css の .input-field と同じ
    * ====================================================================== */

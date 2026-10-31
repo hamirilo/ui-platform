@@ -247,6 +247,44 @@
     --card-title-size: 1.5rem; /* 見出しが text-2xl のカード */
   }
 
+  /* タイトル行の下の罫線 — React の <Card titleRule="neutral|accent"> と 1:1
+   *
+   * <div class="card">
+   *   <h2 class="text-base font-semibold">見出し</h2>
+   *   <div class="card-title-rule card-title-rule-accent" style="--card-rule-color: var(--color-warning)"></div>
+   *   …
+   * </div>
+   *
+   * 見出しの直後に置く。左右へ余白（--card-optical）の分だけ負のマージンを取り、カード幅いっぱいに引く。
+   * 見出しの下の余白は罫線が持つので、見出しには mb-* を付けない。 */
+  .card-title-rule {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 0.625rem calc(-1 * var(--card-optical)) 0.75rem;
+    background-color: var(--color-border);
+  }
+
+  .card-title-rule-accent {
+    height: 2px;
+    background-color: var(--card-rule-color, var(--color-primary));
+  }
+
+  /* フッターの muted の帯 — React の <Card footerVariant="band"> と 1:1。カードの最後の子に置く。 */
+  .card:has(> .card-footer-band),
+  .card-sm:has(> .card-footer-band),
+  .card-lg:has(> .card-footer-band) {
+    overflow: hidden;
+  }
+
+  .card-footer-band {
+    @apply flex items-center gap-2 text-xs;
+    margin: 0.75rem calc(-1 * var(--card-optical)) calc(-1 * var(--card-optical));
+    padding: 0.625rem var(--card-optical);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+
   /* テンプレート側の一覧テーブル（レイアウト系 UI はテンプレート側が所有する方針） */
   .data-table {
     @apply w-full text-sm border-collapse;

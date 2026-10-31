@@ -103,7 +103,7 @@ CSS は子要素の文字サイズを読めないため、`Card` の `size` プ�
   head={['伝えたいこと', '代わりの表現', '部品']}
   rows={[
     ['案内・注意・エラー（面全体の意味）', '淡い面 + 同系の 1px 枠 + tone アイコン + 見出しの色', <><Code>Alert</Code> / <Code>.alert-{'{tone}'}</Code></>],
-    ['カードのカテゴリ・状態', 'タイトル行の下にカード幅いっぱいの罫線（意味色は 2px、1 カード 1 色）。または見出しの横に Badge', <><Code>Card</Code> / <Code>Badge</Code></>],
+    ['カードのカテゴリ・状態', 'タイトル行の下にカード幅いっぱいの罫線（意味色は 2px、1 カード 1 色）。または見出しの横に Badge', <><Code>Card</Code> の <Code>titleRule="neutral|accent"</Code>（色は <Code>accentColor</Code>）/ <Code>.card-title-rule</Code>（<Code>.card-title-rule-accent</Code>）/ <Code>Badge</Code></>],
     ['一覧・ナビの選択中', '行全体を淡い面で塗る（必要なら同系の枠）', <><Code>ActiveIndicator</Code> / <Code>NavItem</Code></>],
     ['行やカードの業務状態', '状態ラベルを置く。色だけに頼らず文字で言う', <Code>Badge tone</Code>],
   ]}
