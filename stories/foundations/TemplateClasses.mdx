@@ -19,6 +19,7 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
     [<Code>btn-primary / btn-secondary / btn-success / btn-danger</Code>, <Code>Button</Code>, '操作。サイズは btn-xs / btn-sm / btn-lg'],
     [<Code>input-field</Code>, <Code>Input / Select / Textarea</Code>, 'フォーム入力'],
     [<Code>card / card-sm / card-lg</Code>, <Code>Card</Code>, '「もの」を並べるときの面。まとまりには page-section を使う'],
+    [<Code>card-title-rule / card-title-rule-accent / card-footer-band</Code>, <><Code>Card</Code> の titleRule / accentColor / footerVariant="band"</>, 'タイトル行下の全幅罫線（accent は 2px の意味色）/ muted の帯にしたフッター'],
     [<Code>badge badge-{'{tone}'}</Code>, <Code>Badge tone</Code>, '状態表示'],
     [<Code>alert alert-{'{tone}'}</Code>, <Code>Alert</Code>, '継続して伝える注意・案内'],
     [<Code>breadcrumbs</Code>, <Code>Breadcrumbs</Code>, '現在位置'],
@@ -273,6 +274,23 @@ React コンポーネントの中ではこれらのクラスを書かず、対�
   <p class="text-sm text-muted-foreground">カードの本文。</p>
 </div>`}
   note="余白と角丸は見出しの文字サイズから導出される（card-sm / card-lg で切替）。"
+/>
+
+<ClassSample
+  sample={`<div style="display: flex; flex-wrap: wrap; gap: 1rem">
+<div class="card" style="width: 16rem">
+  <h2 class="text-base font-semibold">月間の受付件数</h2>
+  <div class="card-title-rule"></div>
+  <p class="text-2xl font-semibold">1,284 件</p>
+  <div class="card-footer-band">前月比 +9.5% ｜ 直近 30 日</div>
+</div>
+<div class="card" style="width: 16rem">
+  <h2 class="text-base font-semibold">要確認 <span class="badge badge-warning">超過</span></h2>
+  <div class="card-title-rule card-title-rule-accent" style="--card-rule-color: var(--color-warning)"></div>
+  <p class="text-2xl font-semibold">¥2,436</p>
+</div>
+</div>`}
+  note="罫線は見出しの直後、帯はカードの最後の子に置く。どちらも余白（--card-optical）の分だけ負のマージンを取り、カード幅いっぱいに広がる。見出しの下の余白は罫線が持つので mb-* を付けない。カテゴリ・状態を border-left で示さない。"
 />
 
 ## 一覧テーブル

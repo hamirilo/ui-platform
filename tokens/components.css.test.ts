@@ -106,6 +106,24 @@ describe("tokens/classes.css（テンプレート用クラスの公開契約）"
     expect(block).toMatch(/::before/);
   });
 
+  /* 余白は見出しの文字サイズから導出される。負のマージンを固定値で書くと、
+   * card-sm / card-lg で罫線と帯の端がカードの縁から外れる。React 側も同じ式を使う。 */
+  it.each([
+    [".card-title-rule", classesCss],
+    [".card-footer-band", classesCss],
+    [".cn-card-title-rule", css],
+    [".cn-card-footer-band", css],
+  ])("%s は --card-optical から負のマージンを取ってカード幅いっぱいに引く", (selector, source) => {
+    expect(ruleBody(selector, source)).toMatch(/calc\(-1 \* var\(--card-optical\)\)/);
+  });
+
+  it.each([
+    [".card-title-rule-accent", classesCss],
+    ['.cn-card-title-rule[data-variant="accent"]', css],
+  ])("%s の既定色は --color-primary", (selector, source) => {
+    expect(ruleBody(selector, source)).toContain("var(--card-rule-color, var(--color-primary))");
+  });
+
   /* field-visibility Island が評価するまで data-visible-when の塊を描かない。 */
   it("data-visible-when の FOUC 抑止ルールを持つ", () => {
     expect(classesCss).toMatch(/\[data-visible-when\]:not\(\[data-visible-when-ready\]\)/);

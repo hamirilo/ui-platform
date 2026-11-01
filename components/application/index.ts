@@ -11,7 +11,7 @@
  *      日本語の既定ラベルなど、shadcn/ui にない value を持つものだけを置きます。
  *      仕様は Storybook を正とします。
  *
- *   2. shadcn/ui をそのまま re-export しているもの（Card / Spinner / Textarea 等）。
+ *   2. shadcn/ui をそのまま re-export しているもの（Spinner / Switch / Tooltip 等）。
  *      ラップする理由がないため、素の shadcn/ui をそのまま公開しています。
  *      **こちらは https://ui.shadcn.com/docs/components がそのまま使えます。**
  *
@@ -186,6 +186,12 @@ export type { DescriptionListProps, DescriptionItem } from "./DescriptionList";
 export { Textarea } from "./Textarea";
 export type { TextareaProps } from "./Textarea";
 
+/* Card は shadcn/ui の re-export から移動した（titleRule / footerVariant を持つため）。
+ * CardHeader / CardFooter は Card の設定を読むのでこちらから、残りの部品は shadcn/ui のまま。 */
+export { Card, CardHeader, CardFooter } from "./Card";
+export type { CardProps, CardTitleRule, CardFooterVariant } from "./Card";
+export { CardTitle, CardDescription, CardAction, CardContent } from "../ui/card";
+
 /* ==========================================================================
  * shadcn/ui をそのまま公開しているもの
  *
@@ -199,15 +205,6 @@ export type { TextareaProps } from "./Textarea";
  * 引き受ける props API 版は上のセクションで `FormFieldSet` として公開しています。
  * ========================================================================== */
 
-export {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardAction,
-  CardContent,
-  CardFooter,
-} from "../ui/card";
 export { Spinner } from "../ui/spinner";
 export { Switch } from "../ui/switch";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";

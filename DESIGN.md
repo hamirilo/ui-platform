@@ -238,7 +238,7 @@ Tailwind CSS の標準スペーシング（0.25rem = 4px 刻み）に準拠し�
 - **Large (`12px` / `rounded-lg`)**: カード（Card）、パネル。
 - **Extra Large (`16px` / `rounded-xl`)**: ダイアログ、モーダルウィンドウ。
 - **Full (`9999px` / `rounded-full`)**: バッジ、アバター、丸型インジケーター。
-- **角丸の面に色付きの左ボーダーを付けない**: 太い直線が角の弧を切り、角が濁る。状態・カテゴリは面の色・アイコン・タイトル下の罫線・Badge で示す（Storybook「基礎/角丸と影」）。
+- **角丸の面に色付きの左ボーダーを付けない**: 太い直線が角の弧を切り、角が濁る。状態・カテゴリは面の色・アイコン・タイトル下の罫線（`Card` の `titleRule` / `.card-title-rule`。区切りだけなら neutral の 1px、意味色は accent の 2px で 1 カード 1 色）・Badge で示す（Storybook「基礎/角丸と影」）。
 
 ## Components
 

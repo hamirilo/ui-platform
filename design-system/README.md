@@ -128,6 +128,7 @@ Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / To
 | `.btn-primary` / `.btn-secondary` / `.btn-success` / `.btn-danger`（`.btn-xs` / `.btn-sm` / `.btn-lg`） | Button | 操作 |
 | `.input-field` | Input / Select / Textarea | フォーム入力。エラーは `aria-invalid` を付けると枠が danger になる（React 側と同じ） |
 | `.card` / `.card-sm` / `.card-lg` | Card | 「もの」を並べるときの面。まとまりには `.page-section` |
+| `.card-title-rule`（`.card-title-rule-accent`）/ `.card-footer-band` | Card `titleRule` / `accentColor` / `footerVariant="band"` | タイトル行下の全幅罫線（accent は 2px の意味色、色は `--card-rule-color`）/ muted の帯にしたフッター |
 | `.badge` + `.badge-{tone}` | Badge `tone` | 状態表示。`models.py` の `*_display_class` は tone クラス名を返す |
 | `.alert` + `.alert-{tone}`（`.alert-banner`） | Alert | 継続して伝える注意・案内 |
 | `.breadcrumbs` | Breadcrumbs | 現在位置 |
