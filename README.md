@@ -1,3 +1,5 @@
+> 移行先: [hamirilo/hamirilo-platform](https://github.com/hamirilo/hamirilo-platform) の `packages/ui-kit`
+
 # UI Platform
 
 社内Application向けの **UI設計とUI実装の統合入口** です。
